@@ -19,11 +19,19 @@
       --text-muted: #94a3b8;
       --shadow: 0 10px 25px rgba(0,0,0,0.5);
       --border: #2e344e;
+
+      /* COULEURS HSK OFFICIELLES */
+      --hsk1: #08d259; /* Vert */
+      --hsk2: #229fff; /* Bleu clair */
+      --hsk3: #fccf46; /* Jaune */
+      --hsk4: #ffa52f; /* Orange */
+      --hsk5: #ff47c2; /* Rose */
+      --hsk6: #991b1b; /* Bordeaux / Rouge foncé */
+      --hsk79: #86198f; /* Rose foncé / Violet */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* LAYOUT GLOBAL SANS SCROLL */
     body {
       font-family: 'Inter', sans-serif;
       background-color: var(--bg);
@@ -39,6 +47,30 @@
       font-weight: 900;
     }
 
+    /* BADGES HSK */
+    .hsk-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffffff !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      line-height: 1;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+    .hsk-tag.lvl-1 { background-color: var(--hsk1); }
+    .hsk-tag.lvl-2 { background-color: var(--hsk2); }
+    .hsk-tag.lvl-3 { background-color: var(--hsk3); }
+    .hsk-tag.lvl-4 { background-color: var(--hsk4); }
+    .hsk-tag.lvl-5 { background-color: var(--hsk5); }
+    .hsk-tag.lvl-6 { background-color: var(--hsk6); }
+    .hsk-tag.lvl-7 { background-color: var(--hsk79); }
+
     /* ECRANS */
     .screen {
       display: none;
@@ -49,7 +81,6 @@
     }
     .screen.active { display: flex; }
 
-    /* MENU SETUP */
     #setupScreen { overflow-y: auto; justify-content: flex-start; }
     
     .panel {
@@ -66,7 +97,6 @@
     h1, h2 { text-align: center; margin-bottom: 20px; }
     h1 { font-size: 28px; font-weight: 800; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     
-    /* FORM ELEMENTS */
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;}
     select, input[type="range"], input[type="file"] { width: 100%; padding: 12px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--border); color: white; font-family: 'Inter'; font-size: 15px; outline: none; }
@@ -92,7 +122,6 @@
     .checkbox-wrap { display: flex; align-items: center; gap: 10px; background: var(--card-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; }
     .checkbox-wrap input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
 
-    /* GAME UI RESPONSIVE */
     #gameScreen { max-width: 900px; width: 100%; margin: 0 auto; }
     .game-header { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--panel); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border); }
     .game-stat { display: flex; flex-direction: column; align-items: center; flex: 1; }
@@ -109,7 +138,6 @@
       margin-bottom: 15px;
     }
 
-    /* GRID */
     .board {
       display: grid;
       gap: 8px;
@@ -128,7 +156,6 @@
 
     .game-footer { flex-shrink: 0; display: flex; gap: 15px; width: 100%; }
 
-    /* CARDS */
     .card {
       position: relative;
       cursor: pointer;
@@ -181,7 +208,6 @@
       font-weight: bold;
     }
 
-    /* SHAKE ANIMATION */
     @keyframes shakeBoard {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-10px); }
@@ -191,7 +217,6 @@
     }
     .shake { animation: shakeBoard 0.5s ease-in-out; }
 
-    /* MODALS */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
       display: none; align-items: center; justify-content: center; z-index: 1000;
@@ -209,7 +234,6 @@
     .modal-title { font-size: 20px; font-weight: bold; }
     .modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
 
-    /* QUIZ STYLES */
     .quiz-target { text-align: center; font-size: 60px; margin-bottom: 10px; color: var(--accent); text-shadow: 0 2px 10px rgba(99,102,241,0.3); flex-shrink: 0;}
     .quiz-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 15px; flex-shrink: 0;}
     .quiz-options { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px;}
@@ -218,6 +242,7 @@
       background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main);
       padding: 14px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s;
       text-align: left; line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 10px;
     }
     .quiz-btn:hover:not(:disabled) { background: var(--border); border-color: var(--accent); }
     .quiz-btn.correct { background: var(--correct) !important; color: white !important; border-color: var(--correct) !important; }
@@ -225,17 +250,16 @@
     .quiz-btn:disabled { cursor: default; }
 
     .pinyin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .pinyin-grid .quiz-btn { text-align: center; font-size: 22px; padding: 12px; }
+    .pinyin-grid .quiz-btn { justify-content: center; font-size: 22px; padding: 12px; }
     .pinyin-grid .quiz-btn:last-child { grid-column: span 2; }
 
-    /* FOUND WORDS LIST */
     .words-list { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px; flex: 1;}
     .word-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .word-hz { font-size: 28px; color: var(--text-main); margin-bottom: 4px; display: block; }
+    .word-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .word-hz { font-size: 28px; color: var(--text-main); }
     .word-py { font-size: 16px; color: var(--text-muted); margin-bottom: 8px; display: block; }
     .word-df { font-size: 14px; color: #cbd5e1; line-height: 1.5; display: block;}
 
-    /* TOAST */
     .toast {
       position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
       background: var(--accent); color: white; padding: 12px 24px; border-radius: 30px;
@@ -252,13 +276,11 @@
   <div id="setupScreen" class="screen active">
     <h1>Memory HSK</h1>
     
-    <!-- STATUTS PRINCIPAUX -->
     <div class="status-chips">
       <div id="statusDict" class="chip">Dictionnaire : Chargement...</div>
       <div id="statusHsk" class="chip">Niveaux HSK : Chargement...</div>
     </div>
 
-    <!-- PANNEAU D'IMPORTATION MANUELLE (Affiché uniquement en cas d'erreur de fetch) -->
     <div class="panel" id="manualUpload" style="display: none;">
       <p style="font-size:13px; color:var(--incorrect); margin-bottom:12px; font-weight: 600;">
         ⚠️ Chargement automatique impossible (fichier local ou non trouvé). Importez manuellement :
@@ -385,16 +407,10 @@
   <div id="toast" class="toast">Message</div>
 
 <script>
-/**
- * STRUCTURES DE DONNÉES
- */
 let dict = new Map();
 let hskMap = new Map();
 let wordPool = [];
 
-/**
- * CONFIGURATION ET ÉTAT DU JEU
- */
 const DICT_URL = 'cedict_ts.u8';
 const HSK_URL = 'niveaux.csv';
 
@@ -414,9 +430,12 @@ let quizQueue = [];
 let currentQuizStep = null;
 let quizPair = [];
 
-/**
- * CONVERSION PINYIN AVEC ACCENTS
- */
+function getHskTagHtml(level) {
+  if (!level || level < 1) return '';
+  const label = level === 7 ? 'HSK 7-9' : `HSK ${level}`;
+  return `<span class="hsk-tag lvl-${level}">${label}</span>`;
+}
+
 function applyToneDiacritic(syllable, toneNum) {
   if (toneNum === 5) return syllable;
   const toneMarks = {
@@ -445,9 +464,6 @@ function numericToDiacriticPinyinStr(pinyinStr) {
   }).join(' ');
 }
 
-/**
- * INITIALISATION & ÉCOUTEURS
- */
 document.addEventListener('DOMContentLoaded', () => {
   setupUIEventListeners();
   loadDataFiles();
@@ -481,13 +497,10 @@ function setupUIEventListeners() {
   });
   document.getElementById('btnFoundWords').addEventListener('click', () => showWordListModal(foundWordsData, "Mots trouvés"));
 
-  document.getElementById('fileDict').addEventListener('change', e => readLocalFile(e, parseCedict, 'dict'));
-  document.getElementById('fileHsk').addEventListener('change', e => readLocalFile(e, parseHSK, 'hsk'));
+  document.getElementById('fileDict').addEventListener('change', e => readLocalFile(e, parseCedict));
+  document.getElementById('fileHsk').addEventListener('change', e => readLocalFile(e, parseHSK));
 }
 
-/**
- * CHARGEMENT DES FICHIERS (AUTO ET MANUEL)
- */
 async function loadDataFiles() {
   const statusDict = document.getElementById('statusDict');
   const statusHsk = document.getElementById('statusHsk');
@@ -496,7 +509,6 @@ async function loadDataFiles() {
   let dictOk = false;
   let hskOk = false;
 
-  // 1. Dictionnaire
   try {
     statusDict.textContent = "Dictionnaire : Chargement...";
     const resDict = await fetch(DICT_URL);
@@ -505,12 +517,10 @@ async function loadDataFiles() {
     parseCedict(txtDict);
     dictOk = true;
   } catch (err) {
-    console.warn("Échec chargement auto dictionnaire :", err);
     statusDict.textContent = "Dictionnaire : Non trouvé";
     statusDict.classList.add('error');
   }
 
-  // 2. Niveaux HSK
   try {
     statusHsk.textContent = "Niveaux HSK : Chargement...";
     const resHsk = await fetch(HSK_URL);
@@ -519,12 +529,10 @@ async function loadDataFiles() {
     parseHSK(txtHsk);
     hskOk = true;
   } catch (err) {
-    console.warn("Échec chargement auto HSK :", err);
     statusHsk.textContent = "Niveaux HSK : Non trouvé";
     statusHsk.classList.add('error');
   }
 
-  // Si l'un des deux échoue, afficher la boîte d'importation manuelle
   if (!dictOk || !hskOk) {
     manualUpload.style.display = 'block';
   } else {
@@ -613,9 +621,6 @@ function updateWordPool() {
   btnStart.disabled = wordPool.length < 32; 
 }
 
-/**
- * MOTEUR DU JEU
- */
 function startGame() {
   gameConfig.size = parseInt(document.getElementById('selGrid').value);
   gameConfig.mode = document.getElementById('selMode').value;
@@ -746,6 +751,7 @@ function markPairAsFound() {
 
   let dictEntry = dict.get(c1.word);
   dictEntry.hanzi = c1.word;
+  dictEntry.level = hskMap.get(c1.word);
   foundWordsData.push(dictEntry);
 
   pairsFound++;
@@ -763,9 +769,6 @@ function markPairAsFound() {
   }
 }
 
-/**
- * GESTION DES QUIZ
- */
 function buildQuizQueue(word) {
   quizQueue = [];
   let m = gameConfig.mode;
@@ -805,19 +808,26 @@ function renderDefQuiz(word) {
   const subtitle = document.getElementById('quizSubtitle');
   const optionsContainer = document.getElementById('quizOptions');
   
+  const currentLvl = hskMap.get(word);
   target.textContent = word;
   subtitle.textContent = "Choisissez la bonne définition :";
   optionsContainer.className = "quiz-options";
 
   let correctDef = dict.get(word).defs.join(' / ');
-  let lvl = hskMap.get(word);
-  let sameLvlWords = wordPool.filter(w => hskMap.get(w) === lvl && w !== word);
-  sameLvlWords.sort(() => 0.5 - Math.random());
   
-  let wrongDefs = sameLvlWords.slice(0, 5).map(w => dict.get(w).defs.join(' / '));
-  while(wrongDefs.length < 5) wrongDefs.push("Définition factice " + Math.random().toString(36).substring(7));
+  let otherWords = wordPool.filter(w => w !== word);
+  otherWords.sort(() => 0.5 - Math.random());
+  
+  let wrongOptions = otherWords.slice(0, 4).map(w => ({
+    text: dict.get(w).defs.join(' / '),
+    level: hskMap.get(w),
+    correct: false
+  }));
 
-  let options = [{text: correctDef, correct: true}, ...wrongDefs.map(d => ({text: d, correct: false}))];
+  let options = [
+    { text: correctDef, level: currentLvl, correct: true },
+    ...wrongOptions
+  ];
   options.sort(() => 0.5 - Math.random());
 
   optionsContainer.innerHTML = '';
@@ -825,7 +835,7 @@ function renderDefQuiz(word) {
     let btn = document.createElement('button');
     btn.className = 'quiz-btn';
     btn.dataset.correct = opt.correct;
-    btn.textContent = opt.text;
+    btn.innerHTML = `${getHskTagHtml(opt.level)} <span>${opt.text}</span>`;
     btn.onclick = () => handleQuizAnswer(btn, opt.correct);
     optionsContainer.appendChild(btn);
   });
@@ -924,9 +934,6 @@ function reRenderCardDOM(logicIndex) {
   backFace.textContent = cards[logicIndex].word;
 }
 
-/**
- * UI HELPERS
- */
 function showWordListModal(wordsArray, title) {
   document.getElementById('listTitle').textContent = title;
   const content = document.getElementById('listContent');
@@ -938,13 +945,17 @@ function showWordListModal(wordsArray, title) {
 
   wordsArray.forEach(w => {
     let hanzi = w.hanzi || "Mot";
+    let lvl = w.level || hskMap.get(hanzi) || 0;
     let pinyin = numericToDiacriticPinyinStr(w.pinyin);
     let defs = w.defs.join('<br> • ');
 
     let div = document.createElement('div');
     div.className = 'word-item';
     div.innerHTML = `
-      <span class="word-hz hanzi">${hanzi}</span>
+      <div class="word-header">
+        <span class="word-hz hanzi">${hanzi}</span>
+        ${getHskTagHtml(lvl)}
+      </div>
       <span class="word-py">${pinyin}</span>
       <span class="word-df">• ${defs}</span>
     `;
@@ -970,9 +981,6 @@ function switchScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-/**
- * TIMER
- */
 function updateScoreUI() {
   document.getElementById('uiScore').textContent = `${pairsFound} / ${totalPairs}`;
   document.getElementById('uiTries').textContent = triesCount;

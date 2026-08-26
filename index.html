@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Memory Chinois HSK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0f111a;
+      --panel: #1a1d2d;
+      --card-bg: #252a40;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --correct: #10b981;
+      --incorrect: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --shadow: 0 10px 25px rgba(0,0,0,0.5);
+      --border: #2e344e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* LAYOUT GLOBAL SANS SCROLL */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hanzi {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 900;
+    }
+
+    /* ECRANS */
+    .screen {
+      display: none;
+      height: 100%;
+      padding: 15px;
+      flex-direction: column;
+      align-items: center;
+    }
+    .screen.active { display: flex; }
+
+    /* MENU SETUP */
+    #setupScreen { overflow-y: auto; justify-content: flex-start; }
+    
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: var(--shadow);
+      margin-bottom: 10px;
+    }
+
+    h1, h2 { text-align: center; margin-bottom: 20px; }
+    h1 { font-size: 28px; font-weight: 800; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    /* FORM ELEMENTS */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;}
+    select, input[type="range"], input[type="file"] { width: 100%; padding: 12px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--border); color: white; font-family: 'Inter'; font-size: 15px; outline: none; }
+    
+    .slider-container { display: flex; align-items: center; gap: 15px; }
+    .slider-val { min-width: 60px; text-align: right; font-weight: bold; color: var(--accent); }
+
+    .hsk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(65px, 1fr)); gap: 8px; }
+    .btn-hsk { padding: 10px 5px; border-radius: 10px; border: 2px solid var(--border); background: var(--card-bg); color: var(--text-muted); cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .btn-hsk.active { border-color: var(--accent); background: rgba(99, 102, 241, 0.2); color: var(--text-main); }
+
+    .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(99,102,241,0.4); }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
+    .btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none; }
+    .btn-secondary { background: var(--card-bg); border: 1px solid var(--border); box-shadow: none; }
+    .btn-secondary:hover { background: var(--border); }
+
+    .status-chips { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+    .chip { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; background: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted); transition: all 0.3s; }
+    .chip.ready { color: var(--correct); border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.12); }
+    .chip.error { color: var(--incorrect); border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.12); }
+
+    .checkbox-wrap { display: flex; align-items: center; gap: 10px; background: var(--card-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; }
+    .checkbox-wrap input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+
+    /* GAME UI RESPONSIVE */
+    #gameScreen { max-width: 900px; width: 100%; margin: 0 auto; }
+    .game-header { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--panel); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border); }
+    .game-stat { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    .game-stat span:first-child { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .game-stat span:last-child { font-size: 20px; font-weight: bold; color: var(--accent); }
+    
+    .board-wrapper {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    /* GRID */
+    .board {
+      display: grid;
+      gap: 8px;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: 1;
+      perspective: 1000px;
+    }
+    @media (min-aspect-ratio: 1/1) {
+      .board { width: auto; height: 100%; }
+    }
+
+    .grid-4x4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-6x6 { grid-template-columns: repeat(6, 1fr); }
+    .grid-8x8 { grid-template-columns: repeat(8, 1fr); gap: 4px; }
+
+    .game-footer { flex-shrink: 0; display: flex; gap: 15px; width: 100%; }
+
+    /* CARDS */
+    .card {
+      position: relative;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+    .card.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      user-select: none;
+    }
+    .card-front {
+      background: linear-gradient(135deg, var(--card-bg), var(--panel));
+      border: 2px solid var(--border);
+      color: var(--accent);
+      font-size: 24px;
+    }
+    .card-front::after { content: "★"; opacity: 0.15; }
+    
+    .card-back {
+      background: var(--accent);
+      color: white;
+      transform: rotateY(180deg);
+      border: 2px solid #818cf8;
+      font-size: clamp(16px, 4vw, 42px);
+    }
+    
+    .card.matched .card-back { 
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--correct);
+      box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2);
+      cursor: help; 
+    }
+    .card.matched .card-back::before {
+      content: '✓';
+      position: absolute;
+      top: 2px;
+      right: 5px;
+      font-size: 14px;
+      color: var(--correct);
+      font-weight: bold;
+    }
+
+    /* SHAKE ANIMATION */
+    @keyframes shakeBoard {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    .shake { animation: shakeBoard 0.5s ease-in-out; }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+      display: none; align-items: center; justify-content: center; z-index: 1000;
+      padding: 15px; opacity: 0; transition: opacity 0.3s;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    
+    .modal-content {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 24px; width: 100%; max-width: 500px; box-shadow: var(--shadow);
+      max-height: 90vh; display: flex; flex-direction: column;
+    }
+    
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; }
+    .modal-title { font-size: 20px; font-weight: bold; }
+    .modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+
+    /* QUIZ STYLES */
+    .quiz-target { text-align: center; font-size: 60px; margin-bottom: 10px; color: var(--accent); text-shadow: 0 2px 10px rgba(99,102,241,0.3); flex-shrink: 0;}
+    .quiz-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 15px; flex-shrink: 0;}
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px;}
+    
+    .quiz-btn {
+      background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main);
+      padding: 14px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s;
+      text-align: left; line-height: 1.5;
+    }
+    .quiz-btn:hover:not(:disabled) { background: var(--border); border-color: var(--accent); }
+    .quiz-btn.correct { background: var(--correct) !important; color: white !important; border-color: var(--correct) !important; }
+    .quiz-btn.wrong { background: var(--incorrect) !important; color: white !important; border-color: var(--incorrect) !important; opacity: 0.7; }
+    .quiz-btn:disabled { cursor: default; }
+
+    .pinyin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .pinyin-grid .quiz-btn { text-align: center; font-size: 22px; padding: 12px; }
+    .pinyin-grid .quiz-btn:last-child { grid-column: span 2; }
+
+    /* FOUND WORDS LIST */
+    .words-list { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px; flex: 1;}
+    .word-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .word-hz { font-size: 28px; color: var(--text-main); margin-bottom: 4px; display: block; }
+    .word-py { font-size: 16px; color: var(--text-muted); margin-bottom: 8px; display: block; }
+    .word-df { font-size: 14px; color: #cbd5e1; line-height: 1.5; display: block;}
+
+    /* TOAST */
+    .toast {
+      position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--accent); color: white; padding: 12px 24px; border-radius: 30px;
+      font-weight: bold; box-shadow: var(--shadow); transition: transform 0.3s; z-index: 2000;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--incorrect); }
+    .toast.success { background: var(--correct); }
+  </style>
+</head>
+<body>
+
+  <!-- ÉCRAN D'ACCUEIL -->
+  <div id="setupScreen" class="screen active">
+    <h1>Memory HSK</h1>
+    
+    <!-- STATUTS PRINCIPAUX -->
+    <div class="status-chips">
+      <div id="statusDict" class="chip">Dictionnaire : Chargement...</div>
+      <div id="statusHsk" class="chip">Niveaux HSK : Chargement...</div>
+    </div>
+
+    <!-- PANNEAU D'IMPORTATION MANUELLE (Affiché uniquement en cas d'erreur de fetch) -->
+    <div class="panel" id="manualUpload" style="display: none;">
+      <p style="font-size:13px; color:var(--incorrect); margin-bottom:12px; font-weight: 600;">
+        ⚠️ Chargement automatique impossible (fichier local ou non trouvé). Importez manuellement :
+      </p>
+      <div class="form-group">
+        <label>Dictionnaire (cedict_ts.u8 ou .txt)</label>
+        <input type="file" id="fileDict" accept=".u8,.txt">
+      </div>
+      <div class="form-group">
+        <label>Niveaux HSK (niveaux.csv)</label>
+        <input type="file" id="fileHsk" accept=".csv">
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="form-group">
+        <label>Taille de la grille</label>
+        <select id="selGrid">
+          <option value="4">4 × 4 (8 paires)</option>
+          <option value="6">6 × 6 (18 paires)</option>
+          <option value="8">8 × 8 (32 paires)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Condition de victoire</label>
+        <select id="selMode">
+          <option value="classic">Classique (Paires simples)</option>
+          <option value="def">Quiz : Trouver la définition</option>
+          <option value="pinyin">Quiz : Trouver le pinyin</option>
+          <option value="both">Quiz : Définition + Pinyin</option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox-wrap">
+        <input type="checkbox" id="chkExpert">
+        <label for="chkExpert" style="margin:0; color:var(--text-main);">Mode Expert (Mélange en cas d'erreur)</label>
+      </div>
+
+      <div class="form-group">
+        <label>Mode Temps</label>
+        <select id="selTimeMode">
+          <option value="chrono">Chronomètre (Meilleur temps)</option>
+          <option value="timer">Minuteur (Temps limite)</option>
+          <option value="free">Libre (Sans temps)</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="timerGroup" style="display: none;">
+        <label>Durée du minuteur</label>
+        <div class="slider-container">
+          <input type="range" id="slTimer" min="30" max="600" step="30" value="120">
+          <span class="slider-val" id="valTimer">2m 00s</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Niveaux HSK inclus</label>
+        <div class="hsk-grid">
+          <button class="btn-hsk active" data-lvl="1">HSK 1</button>
+          <button class="btn-hsk active" data-lvl="2">HSK 2</button>
+          <button class="btn-hsk active" data-lvl="3">HSK 3</button>
+          <button class="btn-hsk" data-lvl="4">HSK 4</button>
+          <button class="btn-hsk" data-lvl="5">HSK 5</button>
+          <button class="btn-hsk" data-lvl="6">HSK 6</button>
+          <button class="btn-hsk" data-lvl="7">HSK 7-9</button>
+        </div>
+      </div>
+
+      <button id="btnStart" class="btn" disabled>Démarrer (0 mots dispo)</button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN DE JEU -->
+  <div id="gameScreen" class="screen">
+    <div class="game-header">
+      <div class="game-stat">
+        <span id="timeLabel">Temps</span>
+        <span id="uiTime">00:00</span>
+      </div>
+      <div class="game-stat">
+        <span>Essais</span>
+        <span id="uiTries">0</span>
+      </div>
+      <div class="game-stat">
+        <span>Paires</span>
+        <span id="uiScore">0 / 0</span>
+      </div>
+    </div>
+
+    <div class="board-wrapper">
+      <div id="board" class="board"></div>
+    </div>
+
+    <div class="game-footer">
+      <button id="btnFoundWords" class="btn btn-secondary">Mots trouvés</button>
+      <button id="btnQuit" class="btn btn-secondary">Quitter</button>
+    </div>
+  </div>
+
+  <!-- MODAL: QUIZ -->
+  <div id="modalQuiz" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="quizTitle">Validation</div>
+      </div>
+      <div id="quizTarget" class="quiz-target hanzi"></div>
+      <div id="quizSubtitle" class="quiz-subtitle"></div>
+      <div id="quizOptions" class="quiz-options"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: LISTE -->
+  <div id="modalList" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="listTitle">Mots trouvés</div>
+        <button class="modal-close" onclick="closeModal('modalList')">✕</button>
+      </div>
+      <div id="listContent" class="words-list"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Message</div>
+
+<script>
+/**
+ * STRUCTURES DE DONNÉES
+ */
+let dict = new Map();
+let hskMap = new Map();
+let wordPool = [];
+
+/**
+ * CONFIGURATION ET ÉTAT DU JEU
+ */
+const DICT_URL = 'cedict_ts.u8';
+const HSK_URL = 'niveaux.csv';
+
+let gameConfig = { size: 4, mode: 'classic', expert: false, timeMode: 'chrono', timerSec: 120, levels: [1,2,3] };
+let cards = [];
+let foundWordsData = [];
+let flippedCards = [];
+let lockBoard = false;
+let pairsFound = 0;
+let totalPairs = 0;
+let timerInt = null;
+let secondsElapsed = 0;
+let triesCount = 0;
+let hideTimeout = null;
+
+let quizQueue = []; 
+let currentQuizStep = null;
+let quizPair = [];
+
+/**
+ * CONVERSION PINYIN AVEC ACCENTS
+ */
+function applyToneDiacritic(syllable, toneNum) {
+  if (toneNum === 5) return syllable;
+  const toneMarks = {
+    a: ['ā','á','ǎ','à'], e: ['ē','é','ě','è'], i: ['ī','í','ǐ','ì'],
+    o: ['ō','ó','ǒ','ò'], u: ['ū','ú','ǔ','ù'], v: ['ǖ','ǘ','ǚ','ǜ'], ü: ['ǖ','ǘ','ǚ','ǜ']
+  };
+  syllable = syllable.replace(/v/g, 'ü');
+  const vowels = ['a', 'o', 'e', 'i', 'u', 'ü'];
+  
+  for (let v of vowels) {
+    if (syllable.includes(v)) {
+      if(v === 'i' && syllable.includes('u')) v = 'u';
+      else if(v === 'u' && syllable.includes('i')) v = 'i';
+      return syllable.replace(v, toneMarks[v][toneNum - 1]);
+    }
+  }
+  return syllable;
+}
+
+function numericToDiacriticPinyinStr(pinyinStr) {
+  let parts = pinyinStr.split(' ');
+  return parts.map(p => {
+    let tone = p.match(/[1-5]/);
+    if(!tone) return p.replace(/v/g, 'ü');
+    return applyToneDiacritic(p.replace(/[1-5]/g, '').toLowerCase(), parseInt(tone[0]));
+  }).join(' ');
+}
+
+/**
+ * INITIALISATION & ÉCOUTEURS
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  setupUIEventListeners();
+  loadDataFiles();
+});
+
+function setupUIEventListeners() {
+  const slTimer = document.getElementById('slTimer');
+  const valTimer = document.getElementById('valTimer');
+  slTimer.addEventListener('input', e => {
+    let s = parseInt(e.target.value);
+    let m = Math.floor(s/60);
+    let sec = s%60;
+    valTimer.textContent = `${m}m ${sec.toString().padStart(2,'0')}s`;
+  });
+
+  document.getElementById('selTimeMode').addEventListener('change', e => {
+    document.getElementById('timerGroup').style.display = e.target.value === 'timer' ? 'flex' : 'none';
+  });
+
+  document.querySelectorAll('.btn-hsk').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      updateWordPool();
+    });
+  });
+
+  document.getElementById('btnStart').addEventListener('click', startGame);
+  document.getElementById('btnQuit').addEventListener('click', () => {
+    stopTimer();
+    switchScreen('setupScreen');
+  });
+  document.getElementById('btnFoundWords').addEventListener('click', () => showWordListModal(foundWordsData, "Mots trouvés"));
+
+  document.getElementById('fileDict').addEventListener('change', e => readLocalFile(e, parseCedict, 'dict'));
+  document.getElementById('fileHsk').addEventListener('change', e => readLocalFile(e, parseHSK, 'hsk'));
+}
+
+/**
+ * CHARGEMENT DES FICHIERS (AUTO ET MANUEL)
+ */
+async function loadDataFiles() {
+  const statusDict = document.getElementById('statusDict');
+  const statusHsk = document.getElementById('statusHsk');
+  const manualUpload = document.getElementById('manualUpload');
+
+  let dictOk = false;
+  let hskOk = false;
+
+  // 1. Dictionnaire
+  try {
+    statusDict.textContent = "Dictionnaire : Chargement...";
+    const resDict = await fetch(DICT_URL);
+    if (!resDict.ok) throw new Error(`HTTP ${resDict.status}`);
+    const txtDict = await resDict.text();
+    parseCedict(txtDict);
+    dictOk = true;
+  } catch (err) {
+    console.warn("Échec chargement auto dictionnaire :", err);
+    statusDict.textContent = "Dictionnaire : Non trouvé";
+    statusDict.classList.add('error');
+  }
+
+  // 2. Niveaux HSK
+  try {
+    statusHsk.textContent = "Niveaux HSK : Chargement...";
+    const resHsk = await fetch(HSK_URL);
+    if (!resHsk.ok) throw new Error(`HTTP ${resHsk.status}`);
+    const txtHsk = await resHsk.text();
+    parseHSK(txtHsk);
+    hskOk = true;
+  } catch (err) {
+    console.warn("Échec chargement auto HSK :", err);
+    statusHsk.textContent = "Niveaux HSK : Non trouvé";
+    statusHsk.classList.add('error');
+  }
+
+  // Si l'un des deux échoue, afficher la boîte d'importation manuelle
+  if (!dictOk || !hskOk) {
+    manualUpload.style.display = 'block';
+  } else {
+    manualUpload.style.display = 'none';
+  }
+}
+
+function readLocalFile(event, parserFunc) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => parserFunc(e.target.result);
+  reader.readAsText(file, 'utf-8');
+}
+
+function parseCedict(text) {
+  const lines = text.split(/\r?\n/);
+  dict.clear();
+  for(let line of lines) {
+    line = line.trim();
+    if(!line || line.startsWith('#')) continue;
+    
+    let m = line.match(/^(\S+)\s+(\S+)\s+\[([^\]]+)\]\s+\/(.+)\/$/);
+    if(m) {
+      let simp = m[2];
+      let pinyin = m[3];
+      let defsStr = m[4];
+      
+      defsStr = defsStr.replace(/\[([a-zA-Z1-5\s:]+)\]/g, (match, p1) => {
+        return '[' + numericToDiacriticPinyinStr(p1) + ']';
+      });
+      
+      let defs = defsStr.split('/').filter(d => d.trim().length > 0);
+      if(!dict.has(simp)) {
+        dict.set(simp, { pinyin, defs });
+      }
+    }
+  }
+  const s = document.getElementById('statusDict');
+  s.textContent = `Dictionnaire : OK (${dict.size})`;
+  s.className = 'chip ready';
+  checkReady();
+}
+
+function parseHSK(text) {
+  const lines = text.split(/\r?\n/);
+  hskMap.clear();
+  for(let i=1; i<lines.length; i++){
+    let l = lines[i].trim();
+    if(!l) continue;
+    let parts = l.split(/[,;]/);
+    if(parts.length < 2) continue;
+    
+    let word = parts[0].trim();
+    let val = parts[1].trim();
+    let lvl = 0;
+    
+    if(/^\d+$/.test(val)) lvl = parseInt(val);
+    else if(val === '7-9' || val === 'sept') lvl = 7;
+    
+    if(lvl >= 1 && lvl <= 7) hskMap.set(word, lvl);
+  }
+  const s = document.getElementById('statusHsk');
+  s.textContent = `Niveaux HSK : OK (${hskMap.size})`;
+  s.className = 'chip ready';
+  checkReady();
+}
+
+function checkReady() {
+  if(dict.size > 0 && hskMap.size > 0) {
+    document.getElementById('manualUpload').style.display = 'none';
+    updateWordPool();
+  }
+}
+
+function updateWordPool() {
+  gameConfig.levels = Array.from(document.querySelectorAll('.btn-hsk.active')).map(b => parseInt(b.dataset.lvl));
+  wordPool = [];
+  for(let [word, lvl] of hskMap.entries()) {
+    if(gameConfig.levels.includes(lvl) && dict.has(word)) {
+      wordPool.push(word);
+    }
+  }
+  let btnStart = document.getElementById('btnStart');
+  btnStart.textContent = `Démarrer (${wordPool.length} mots dispo)`;
+  btnStart.disabled = wordPool.length < 32; 
+}
+
+/**
+ * MOTEUR DU JEU
+ */
+function startGame() {
+  gameConfig.size = parseInt(document.getElementById('selGrid').value);
+  gameConfig.mode = document.getElementById('selMode').value;
+  gameConfig.expert = document.getElementById('chkExpert').checked;
+  gameConfig.timeMode = document.getElementById('selTimeMode').value;
+  gameConfig.timerSec = parseInt(document.getElementById('slTimer').value);
+
+  totalPairs = (gameConfig.size * gameConfig.size) / 2;
+  
+  if(wordPool.length < totalPairs) {
+    showToast("Pas assez de mots disponibles !", "error");
+    return;
+  }
+
+  let shuffledPool = [...wordPool].sort(() => 0.5 - Math.random());
+  let selectedWords = shuffledPool.slice(0, totalPairs);
+  
+  cards = [];
+  selectedWords.forEach((word, index) => {
+    cards.push({ id: `a_${index}`, word: word, state: 'hidden', logicIndex: 0 });
+    cards.push({ id: `b_${index}`, word: word, state: 'hidden', logicIndex: 0 });
+  });
+
+  cards.sort(() => 0.5 - Math.random());
+  cards.forEach((c, i) => c.logicIndex = i);
+
+  pairsFound = 0;
+  triesCount = 0;
+  if(hideTimeout) {
+    clearTimeout(hideTimeout);
+    hideTimeout = null;
+  }
+  foundWordsData = [];
+  flippedCards = [];
+  lockBoard = false;
+
+  setupGridUI();
+  updateScoreUI();
+  startTimer();
+
+  switchScreen('gameScreen');
+}
+
+function setupGridUI() {
+  const board = document.getElementById('board');
+  board.className = `board grid-${gameConfig.size}x${gameConfig.size}`;
+  board.innerHTML = '';
+
+  cards.forEach((card, i) => {
+    const el = document.createElement('div');
+    el.classList.add('card');
+    el.dataset.logicIndex = i;
+    el.innerHTML = `
+      <div class="card-face card-front"></div>
+      <div class="card-face card-back hanzi">${card.word}</div>
+    `;
+    el.addEventListener('click', () => handleCardClick(i));
+    board.appendChild(el);
+  });
+}
+
+function handleCardClick(logicIndex) {
+  let cardData = cards[logicIndex];
+
+  if (cardData.state !== 'hidden' || flippedCards.includes(cardData)) return;
+
+  if (hideTimeout) {
+    hideFlippedCards();
+  }
+
+  if (lockBoard) return;
+  
+  let domCard = document.querySelector(`.card[data-logic-index="${logicIndex}"]`);
+  domCard.classList.add('flipped');
+  flippedCards.push(cardData);
+
+  if (flippedCards.length === 2) {
+    triesCount++;
+    updateScoreUI();
+
+    let [c1, c2] = flippedCards;
+    
+    if (c1.word === c2.word) {
+      lockBoard = true;
+      setTimeout(() => {
+        quizPair = [c1, c2];
+        buildQuizQueue(c1.word);
+        processQuizQueue();
+      }, 400);
+    } else {
+      hideTimeout = setTimeout(hideFlippedCards, 1300);
+    }
+  }
+}
+
+function hideFlippedCards() {
+  if (hideTimeout) {
+    clearTimeout(hideTimeout);
+    hideTimeout = null;
+  }
+
+  if (flippedCards.length === 2) {
+    let [c1, c2] = flippedCards;
+    let dom1 = document.querySelector(`.card[data-logic-index="${c1.logicIndex}"]`);
+    let dom2 = document.querySelector(`.card[data-logic-index="${c2.logicIndex}"]`);
+    
+    if(dom1) dom1.classList.remove('flipped');
+    if(dom2) dom2.classList.remove('flipped');
+  }
+
+  flippedCards = [];
+  lockBoard = false;
+}
+
+function markPairAsFound() {
+  let [c1, c2] = quizPair;
+  c1.state = 'matched';
+  c2.state = 'matched';
+
+  let dom1 = document.querySelector(`.card[data-logic-index="${c1.logicIndex}"]`);
+  let dom2 = document.querySelector(`.card[data-logic-index="${c2.logicIndex}"]`);
+  
+  dom1.classList.add('matched');
+  dom2.classList.add('matched');
+
+  dom1.onclick = (e) => { e.stopPropagation(); showWordListModal([dict.get(c1.word)], c1.word); };
+  dom2.onclick = (e) => { e.stopPropagation(); showWordListModal([dict.get(c2.word)], c2.word); };
+
+  let dictEntry = dict.get(c1.word);
+  dictEntry.hanzi = c1.word;
+  foundWordsData.push(dictEntry);
+
+  pairsFound++;
+  updateScoreUI();
+  
+  flippedCards = [];
+  lockBoard = false;
+
+  if(pairsFound === totalPairs) {
+    stopTimer();
+    setTimeout(() => {
+      showToast("Félicitations, vous avez gagné !", "success");
+      showWordListModal(foundWordsData, "Victoire ! Mots découverts");
+    }, 500);
+  }
+}
+
+/**
+ * GESTION DES QUIZ
+ */
+function buildQuizQueue(word) {
+  quizQueue = [];
+  let m = gameConfig.mode;
+  if(m === 'classic') return; 
+
+  if(m === 'def' || m === 'both') {
+    quizQueue.push({ type: 'def', word: word });
+  }
+  if(m === 'pinyin' || m === 'both') {
+    let chars = Array.from(word);
+    let pinyinSyllables = dict.get(word).pinyin.split(' ');
+    if(pinyinSyllables.length !== chars.length) pinyinSyllables = chars.map(c => dict.get(c)?.pinyin.split(' ')[0] || "xx1");
+
+    chars.forEach((c, idx) => {
+      quizQueue.push({ type: 'pinyin', word: word, char: c, pinyinObj: pinyinSyllables[idx], charIdx: idx, totalChars: chars.length });
+    });
+  }
+}
+
+function processQuizQueue() {
+  if (quizQueue.length === 0) {
+    closeModal('modalQuiz');
+    markPairAsFound();
+    return;
+  }
+  currentQuizStep = quizQueue.shift();
+  
+  if(currentQuizStep.type === 'def') {
+    renderDefQuiz(currentQuizStep.word);
+  } else if (currentQuizStep.type === 'pinyin') {
+    renderPinyinQuiz(currentQuizStep.word, currentQuizStep.char, currentQuizStep.pinyinObj, currentQuizStep.charIdx, currentQuizStep.totalChars);
+  }
+}
+
+function renderDefQuiz(word) {
+  const target = document.getElementById('quizTarget');
+  const subtitle = document.getElementById('quizSubtitle');
+  const optionsContainer = document.getElementById('quizOptions');
+  
+  target.textContent = word;
+  subtitle.textContent = "Choisissez la bonne définition :";
+  optionsContainer.className = "quiz-options";
+
+  let correctDef = dict.get(word).defs.join(' / ');
+  let lvl = hskMap.get(word);
+  let sameLvlWords = wordPool.filter(w => hskMap.get(w) === lvl && w !== word);
+  sameLvlWords.sort(() => 0.5 - Math.random());
+  
+  let wrongDefs = sameLvlWords.slice(0, 5).map(w => dict.get(w).defs.join(' / '));
+  while(wrongDefs.length < 5) wrongDefs.push("Définition factice " + Math.random().toString(36).substring(7));
+
+  let options = [{text: correctDef, correct: true}, ...wrongDefs.map(d => ({text: d, correct: false}))];
+  options.sort(() => 0.5 - Math.random());
+
+  optionsContainer.innerHTML = '';
+  options.forEach(opt => {
+    let btn = document.createElement('button');
+    btn.className = 'quiz-btn';
+    btn.dataset.correct = opt.correct;
+    btn.textContent = opt.text;
+    btn.onclick = () => handleQuizAnswer(btn, opt.correct);
+    optionsContainer.appendChild(btn);
+  });
+
+  document.getElementById('modalQuiz').classList.add('active');
+}
+
+function renderPinyinQuiz(word, char, rawPinyin, charIdx, totalChars) {
+  const target = document.getElementById('quizTarget');
+  const subtitle = document.getElementById('quizSubtitle');
+  const optionsContainer = document.getElementById('quizOptions');
+  
+  target.textContent = char;
+  subtitle.textContent = `Mot : ${word} (${charIdx+1}/${totalChars}). Quel est le bon ton ?`;
+  optionsContainer.className = "quiz-options pinyin-grid";
+
+  let baseSyllable = rawPinyin.replace(/[1-5]/g, '').toLowerCase();
+  let correctTone = parseInt(rawPinyin.match(/[1-5]/) ? rawPinyin.match(/[1-5]/)[0] : 5);
+  
+  let options = [];
+  for(let i=1; i<=5; i++) {
+    options.push({ text: applyToneDiacritic(baseSyllable, i), correct: (i === correctTone) });
+  }
+
+  optionsContainer.innerHTML = '';
+  options.forEach(opt => {
+    let btn = document.createElement('button');
+    btn.className = 'quiz-btn';
+    btn.dataset.correct = opt.correct;
+    btn.textContent = opt.text;
+    btn.onclick = () => handleQuizAnswer(btn, opt.correct);
+    optionsContainer.appendChild(btn);
+  });
+
+  document.getElementById('modalQuiz').classList.add('active');
+}
+
+function handleQuizAnswer(btnElement, isCorrect) {
+  let allBtns = document.getElementById('quizOptions').querySelectorAll('.quiz-btn');
+  
+  if (isCorrect) {
+    allBtns.forEach(b => b.disabled = true);
+    btnElement.classList.add('correct');
+    setTimeout(() => {
+      processQuizQueue();
+    }, 1500);
+  } else {
+    btnElement.classList.add('wrong');
+    btnElement.disabled = true;
+    
+    if (gameConfig.expert) {
+      allBtns.forEach(b => b.disabled = true);
+      allBtns.forEach(b => { if(b.dataset.correct === 'true') b.classList.add('correct'); });
+      
+      setTimeout(() => {
+        closeModal('modalQuiz');
+        handleQuizFailure();
+      }, 2000);
+    }
+  }
+}
+
+function handleQuizFailure() {
+  hideFlippedCards();
+  
+  if (gameConfig.expert) {
+    showToast("Erreur ! Les cartes se cachent et se déplacent...", "error");
+    document.getElementById('board').classList.add('shake');
+    setTimeout(() => document.getElementById('board').classList.remove('shake'), 500);
+
+    let hiddenCards = cards.filter(c => c.state === 'hidden' && c !== quizPair[0] && c !== quizPair[1]);
+    if(hiddenCards.length >= 2) {
+      hiddenCards.sort(() => 0.5 - Math.random());
+      let t1 = hiddenCards[0], t2 = hiddenCards[1];
+
+      let idxC1 = quizPair[0].logicIndex;
+      let idxC2 = quizPair[1].logicIndex;
+      let idxT1 = t1.logicIndex;
+      let idxT2 = t2.logicIndex;
+
+      cards[idxC1] = t1; cards[idxT1] = quizPair[0];
+      cards[idxC2] = t2; cards[idxT2] = quizPair[1];
+
+      cards[idxC1].logicIndex = idxC1; cards[idxT1].logicIndex = idxT1;
+      cards[idxC2].logicIndex = idxC2; cards[idxT2].logicIndex = idxT2;
+
+      reRenderCardDOM(idxC1); reRenderCardDOM(idxT1);
+      reRenderCardDOM(idxC2); reRenderCardDOM(idxT2);
+    }
+  }
+}
+
+function reRenderCardDOM(logicIndex) {
+  let domCard = document.querySelector(`.card[data-logic-index="${logicIndex}"]`);
+  let backFace = domCard.querySelector('.card-back');
+  backFace.textContent = cards[logicIndex].word;
+}
+
+/**
+ * UI HELPERS
+ */
+function showWordListModal(wordsArray, title) {
+  document.getElementById('listTitle').textContent = title;
+  const content = document.getElementById('listContent');
+  content.innerHTML = '';
+
+  if(wordsArray.length === 0) {
+    content.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Aucun mot trouvé pour le moment.</div>';
+  }
+
+  wordsArray.forEach(w => {
+    let hanzi = w.hanzi || "Mot";
+    let pinyin = numericToDiacriticPinyinStr(w.pinyin);
+    let defs = w.defs.join('<br> • ');
+
+    let div = document.createElement('div');
+    div.className = 'word-item';
+    div.innerHTML = `
+      <span class="word-hz hanzi">${hanzi}</span>
+      <span class="word-py">${pinyin}</span>
+      <span class="word-df">• ${defs}</span>
+    `;
+    content.appendChild(div);
+  });
+
+  document.getElementById('modalList').classList.add('active');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/**
+ * TIMER
+ */
+function updateScoreUI() {
+  document.getElementById('uiScore').textContent = `${pairsFound} / ${totalPairs}`;
+  document.getElementById('uiTries').textContent = triesCount;
+}
+
+function startTimer() {
+  stopTimer();
+  let timeLabel = document.getElementById('timeLabel');
+  let uiTime = document.getElementById('uiTime');
+  
+  if (gameConfig.timeMode === 'free') {
+    timeLabel.textContent = "Mode";
+    uiTime.textContent = "Libre";
+    return;
+  }
+
+  if (gameConfig.timeMode === 'chrono') {
+    timeLabel.textContent = "Temps écoulé";
+    secondsElapsed = 0;
+    uiTime.textContent = "00:00";
+    timerInt = setInterval(() => {
+      secondsElapsed++;
+      let m = Math.floor(secondsElapsed/60).toString().padStart(2,'0');
+      let s = (secondsElapsed%60).toString().padStart(2,'0');
+      uiTime.textContent = `${m}:${s}`;
+    }, 1000);
+  } else if (gameConfig.timeMode === 'timer') {
+    timeLabel.textContent = "Temps restant";
+    secondsElapsed = gameConfig.timerSec;
+    updateTimerDisplay();
+    timerInt = setInterval(() => {
+      secondsElapsed--;
+      updateTimerDisplay();
+      if(secondsElapsed <= 0) {
+        stopTimer();
+        lockBoard = true;
+        showToast("Temps écoulé !", "error");
+        setTimeout(() => showWordListModal(foundWordsData, "Fin du temps. Mots découverts :"), 1000);
+      }
+    }, 1000);
+  }
+}
+
+function updateTimerDisplay() {
+  let uiTime = document.getElementById('uiTime');
+  let m = Math.floor(secondsElapsed/60).toString().padStart(2,'0');
+  let s = (secondsElapsed%60).toString().padStart(2,'0');
+  uiTime.textContent = `${m}:${s}`;
+  if(secondsElapsed <= 10) uiTime.style.color = "var(--incorrect)";
+  else uiTime.style.color = "var(--accent)";
+}
+
+function stopTimer() {
+  if(timerInt) clearInterval(timerInt);
+  document.getElementById('uiTime').style.color = "var(--accent)";
+}
+</script>
+</body>
+</html>

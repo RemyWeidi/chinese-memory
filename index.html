@@ -822,6 +822,150 @@
   html.mobile-app .modal-overlay{ padding:10px; }
   html.mobile-app .modal-content{ max-height:calc(100dvh - 20px); padding:16px; border-radius:18px; }
 
+
+  /* ============================================================
+     MOBILE APP V3 — lisibilité + véritable écran d'accueil mobile
+     S'applique uniquement lorsque initRealMobileLayout() ajoute .mobile-app.
+  ============================================================ */
+  html.mobile-app .theme-toggle{
+    width:var(--mobile-theme-size, 46px); height:var(--mobile-theme-size, 46px);
+    top:var(--mobile-edge, 10px); right:var(--mobile-edge, 10px);
+  }
+  html.mobile-app .theme-toggle svg{ width:var(--mobile-theme-icon, 22px); height:var(--mobile-theme-icon, 22px); }
+
+  /* ACCUEIL / RÉGLAGES */
+  html.mobile-app #setupScreen{
+    padding:var(--mobile-setup-top, 18px) var(--mobile-setup-side, 14px) var(--mobile-setup-bottom, 24px);
+    align-items:stretch;
+  }
+  html.mobile-app #setupScreen .brand{
+    gap:var(--mobile-brand-gap, 5px);
+    margin:var(--mobile-brand-mt, 5px) 0 var(--mobile-brand-mb, 18px);
+  }
+  html.mobile-app #setupScreen .brand-seal{
+    width:var(--mobile-seal, 60px); height:var(--mobile-seal, 60px);
+    border-radius:var(--mobile-seal-radius, 16px);
+    font-size:var(--mobile-seal-font, 30px);
+    margin-bottom:var(--mobile-seal-mb, 7px);
+  }
+  html.mobile-app #setupScreen .brand-eyebrow{
+    font-size:var(--mobile-eyebrow-font, 12px);
+    letter-spacing:var(--mobile-eyebrow-spacing, 2px);
+  }
+  html.mobile-app #setupScreen .brand h1{ font-size:var(--mobile-title-font, 31px); }
+  html.mobile-app #setupScreen .status-chips{
+    gap:var(--mobile-chip-gap, 7px); margin-bottom:var(--mobile-chip-mb, 14px);
+  }
+  html.mobile-app #setupScreen .chip{
+    min-height:var(--mobile-chip-h, 34px);
+    padding:var(--mobile-chip-py, 7px) var(--mobile-chip-px, 11px);
+    font-size:var(--mobile-chip-font, 11.5px);
+  }
+  html.mobile-app #setupScreen .panel{
+    max-width:none;
+    padding:var(--mobile-panel-pad, 16px);
+    margin-bottom:var(--mobile-panel-gap, 12px);
+    border-radius:var(--mobile-panel-radius, 17px);
+  }
+  html.mobile-app #setupScreen .section-label{
+    font-size:var(--mobile-section-font, 12px);
+    margin-bottom:var(--mobile-section-mb, 12px);
+    gap:var(--mobile-section-gap, 7px);
+  }
+  html.mobile-app #setupScreen .settings-grid{ gap:var(--mobile-form-gap, 13px); }
+  html.mobile-app #setupScreen .form-group label{
+    font-size:var(--mobile-form-label, 13px); margin-bottom:var(--mobile-form-label-mb, 7px);
+  }
+  html.mobile-app #setupScreen select{
+    min-height:var(--mobile-select-h, 48px);
+    padding:var(--mobile-select-py, 11px) var(--mobile-select-right, 38px) var(--mobile-select-py, 11px) var(--mobile-select-left, 13px);
+    font-size:var(--mobile-select-font, 15px);
+    border-radius:var(--mobile-input-radius, 13px);
+  }
+  html.mobile-app #setupScreen .checkbox-wrap{
+    min-height:var(--mobile-check-h, 48px);
+    padding:var(--mobile-check-pad, 11px);
+    font-size:var(--mobile-check-font, 14px);
+  }
+  html.mobile-app #setupScreen .checkbox-wrap label{ font-size:var(--mobile-check-font, 14px) !important; }
+  html.mobile-app #setupScreen .checkbox-wrap input{ width:var(--mobile-check-size, 21px); height:var(--mobile-check-size, 21px); }
+  html.mobile-app #setupScreen .hsk-grid{ grid-template-columns:repeat(4,1fr); gap:var(--mobile-hsk-grid-gap, 7px); }
+  html.mobile-app #setupScreen .btn-hsk{
+    min-height:var(--mobile-hsk-btn-h, 45px);
+    padding:var(--mobile-hsk-btn-py, 9px) 3px;
+    font-size:var(--mobile-hsk-btn-font, 13px);
+    border-radius:var(--mobile-hsk-btn-radius, 11px);
+  }
+  html.mobile-app #setupScreen .capacity-hint{
+    font-size:var(--mobile-capacity-font, 12px); margin-top:var(--mobile-capacity-mt, 8px);
+  }
+  html.mobile-app #setupScreen #btnStart{
+    max-width:none;
+    min-height:var(--mobile-start-h, 52px);
+    padding:var(--mobile-start-py, 13px);
+    font-size:var(--mobile-start-font, 15.5px);
+    border-radius:var(--mobile-input-radius, 13px);
+  }
+  html.mobile-app #setupScreen .slider-val{ font-size:var(--mobile-slider-font, 13px); min-width:var(--mobile-slider-val-w, 66px); }
+  html.mobile-app #setupScreen input[type="range"]{ height:var(--mobile-slider-h, 7px); }
+  html.mobile-app #setupScreen input[type="range"]::-webkit-slider-thumb{ width:var(--mobile-slider-thumb, 22px); height:var(--mobile-slider-thumb, 22px); }
+
+  /* JEU : typographie et zones tactiles */
+  html.mobile-app .game-header{
+    min-height:var(--mobile-header-h, 50px);
+    padding:var(--mobile-header-py, 9px) var(--mobile-header-px, 9px);
+  }
+  html.mobile-app .game-stat .stat-label{ font-size:var(--mobile-label-font, 11px); }
+  html.mobile-app .game-stat .stat-value{ font-size:var(--mobile-value-font, 18px); }
+  html.mobile-app .reveal-panel{
+    min-height:var(--mobile-reveal-h, 78px); height:var(--mobile-reveal-h, 78px);
+    padding:var(--mobile-reveal-py, 8px) var(--mobile-reveal-px, 11px);
+  }
+  html.mobile-app .reveal-hanzi{ font-size:var(--mobile-hanzi-font, 31px); }
+  html.mobile-app .reveal-pinyin{ font-size:var(--mobile-pinyin-font, 17px); }
+  html.mobile-app .reveal-panel .hsk-tag{ padding:var(--mobile-tag-py, 3px) var(--mobile-tag-px, 7px); font-size:var(--mobile-hsk-font, 10.5px); }
+  html.mobile-app .reveal-def{ font-size:var(--mobile-def-font, 13.5px); line-height:1.25; }
+
+  html.mobile-app .grid-3x3 .card-back{ --base-font:var(--mobile-card-3-font, 46px); }
+  html.mobile-app .grid-4x4 .card-back{ --base-font:var(--mobile-card-4-font, 36px); }
+  html.mobile-app .grid-5x5 .card-back{ --base-font:var(--mobile-card-5-font, 27px); }
+  html.mobile-app .grid-6x6 .card-back{ --base-font:var(--mobile-card-6-font, 22px); }
+  html.mobile-app .grid-8x8 .card-back{ --base-font:var(--mobile-card-8-font, 16px); }
+  html.mobile-app .card-front::after{ font-size:var(--mobile-card-backmark-font, 48px); }
+
+  html.mobile-app .game-footer{ min-height:var(--mobile-footer-h, 50px); }
+  html.mobile-app .game-footer .btn{
+    min-height:var(--mobile-footer-h, 50px);
+    padding:var(--mobile-btn-py, 10px) 4px;
+    font-size:var(--mobile-btn-font, 14px);
+  }
+
+  /* POPUPS / QUIZ / LISTES */
+  html.mobile-app .modal-overlay{ padding:var(--mobile-modal-edge, 12px); }
+  html.mobile-app .modal-content{
+    width:100%; max-width:none; max-height:calc(100dvh - (var(--mobile-modal-edge, 12px) * 2));
+    padding:var(--mobile-modal-pad, 19px);
+    border-radius:var(--mobile-modal-radius, 20px);
+  }
+  html.mobile-app .modal-header{ margin-bottom:var(--mobile-modal-header-mb, 14px); }
+  html.mobile-app .modal-title{ font-size:var(--mobile-modal-title, 19px); min-height:var(--mobile-modal-title-h, 26px); }
+  html.mobile-app .modal-close{ width:var(--mobile-close-size, 38px); height:var(--mobile-close-size, 38px); font-size:var(--mobile-close-font, 18px); }
+  html.mobile-app .quiz-target{ font-size:var(--mobile-quiz-target, 58px); margin-bottom:var(--mobile-quiz-target-mb, 6px); }
+  html.mobile-app .quiz-subtitle{ font-size:var(--mobile-quiz-subtitle, 14px); margin-bottom:var(--mobile-quiz-subtitle-mb, 15px); }
+  html.mobile-app .quiz-options{ gap:var(--mobile-quiz-gap, 10px); }
+  html.mobile-app .quiz-btn{
+    min-height:var(--mobile-quiz-btn-h, 50px);
+    padding:var(--mobile-quiz-btn-pad, 13px);
+    font-size:var(--mobile-quiz-btn-font, 15px);
+    border-radius:var(--mobile-quiz-btn-radius, 13px);
+  }
+  html.mobile-app .pinyin-grid .quiz-btn{ font-size:var(--mobile-pinyin-quiz-font, 20px); min-height:var(--mobile-pinyin-quiz-h, 52px); }
+  html.mobile-app .words-list{ gap:var(--mobile-word-gap, 10px); }
+  html.mobile-app .word-item{ padding:var(--mobile-word-pad, 14px); border-radius:var(--mobile-word-radius, 13px); }
+  html.mobile-app .word-hz{ font-size:var(--mobile-word-hz, 29px); }
+  html.mobile-app .word-py{ font-size:var(--mobile-word-py, 16px); }
+  html.mobile-app .word-df{ font-size:var(--mobile-word-df, 14px); line-height:1.45; }
+
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration:.001ms !important; animation-iteration-count:1 !important;
@@ -1101,33 +1245,121 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-stage-width', `${stage}px`);
     root.style.setProperty('--mobile-pad-y', u(6));
     root.style.setProperty('--mobile-small-gap', u(6));
-    root.style.setProperty('--mobile-header-h', u(40));
-    root.style.setProperty('--mobile-header-py', u(7));
+    root.style.setProperty('--mobile-header-h', u(50));
+    root.style.setProperty('--mobile-header-py', u(9));
     root.style.setProperty('--mobile-header-px', u(8));
     root.style.setProperty('--mobile-radius', u(11));
     root.style.setProperty('--mobile-stat-gap', u(4));
-    root.style.setProperty('--mobile-label-font', u(9));
+    root.style.setProperty('--mobile-label-font', u(11));
     root.style.setProperty('--mobile-label-spacing', u(.35));
-    root.style.setProperty('--mobile-value-font', u(15));
-    root.style.setProperty('--mobile-reveal-h', u(62));
-    root.style.setProperty('--mobile-reveal-py', u(6));
+    root.style.setProperty('--mobile-value-font', u(18));
+    root.style.setProperty('--mobile-reveal-h', u(78));
+    root.style.setProperty('--mobile-reveal-py', u(8));
     root.style.setProperty('--mobile-reveal-px', u(10));
     root.style.setProperty('--mobile-inner-gap', u(3));
     root.style.setProperty('--mobile-head-gap', u(8));
-    root.style.setProperty('--mobile-hanzi-font', u(25));
-    root.style.setProperty('--mobile-pinyin-font', u(14));
-    root.style.setProperty('--mobile-hsk-font', u(9));
-    root.style.setProperty('--mobile-def-font', u(11));
+    root.style.setProperty('--mobile-hanzi-font', u(31));
+    root.style.setProperty('--mobile-pinyin-font', u(17));
+    root.style.setProperty('--mobile-hsk-font', u(10.5));
+    root.style.setProperty('--mobile-def-font', u(13.5));
     root.style.setProperty('--mobile-grid-gap-3', u(7));
     root.style.setProperty('--mobile-grid-gap-4', u(6));
     root.style.setProperty('--mobile-grid-gap-5', u(5));
     root.style.setProperty('--mobile-grid-gap-6', u(4));
     root.style.setProperty('--mobile-grid-gap-8', u(2));
     root.style.setProperty('--mobile-card-radius', u(9));
-    root.style.setProperty('--mobile-footer-h', u(42));
+    root.style.setProperty('--mobile-footer-h', u(50));
     root.style.setProperty('--mobile-footer-gap', u(7));
-    root.style.setProperty('--mobile-btn-py', u(8));
-    root.style.setProperty('--mobile-btn-font', u(12.5));
+    root.style.setProperty('--mobile-btn-py', u(10));
+    root.style.setProperty('--mobile-btn-font', u(14));
+    root.style.setProperty('--mobile-edge', u(10));
+    root.style.setProperty('--mobile-theme-size', u(46));
+    root.style.setProperty('--mobile-theme-icon', u(22));
+    root.style.setProperty('--mobile-setup-top', u(18));
+    root.style.setProperty('--mobile-setup-side', u(14));
+    root.style.setProperty('--mobile-setup-bottom', u(24));
+    root.style.setProperty('--mobile-brand-gap', u(5));
+    root.style.setProperty('--mobile-brand-mt', u(5));
+    root.style.setProperty('--mobile-brand-mb', u(18));
+    root.style.setProperty('--mobile-seal', u(60));
+    root.style.setProperty('--mobile-seal-radius', u(16));
+    root.style.setProperty('--mobile-seal-font', u(30));
+    root.style.setProperty('--mobile-seal-mb', u(7));
+    root.style.setProperty('--mobile-eyebrow-font', u(12));
+    root.style.setProperty('--mobile-eyebrow-spacing', u(2));
+    root.style.setProperty('--mobile-title-font', u(31));
+    root.style.setProperty('--mobile-chip-gap', u(7));
+    root.style.setProperty('--mobile-chip-mb', u(14));
+    root.style.setProperty('--mobile-chip-h', u(34));
+    root.style.setProperty('--mobile-chip-py', u(7));
+    root.style.setProperty('--mobile-chip-px', u(11));
+    root.style.setProperty('--mobile-chip-font', u(11.5));
+    root.style.setProperty('--mobile-panel-pad', u(16));
+    root.style.setProperty('--mobile-panel-gap', u(12));
+    root.style.setProperty('--mobile-panel-radius', u(17));
+    root.style.setProperty('--mobile-section-font', u(12));
+    root.style.setProperty('--mobile-section-mb', u(12));
+    root.style.setProperty('--mobile-section-gap', u(7));
+    root.style.setProperty('--mobile-form-gap', u(13));
+    root.style.setProperty('--mobile-form-label', u(13));
+    root.style.setProperty('--mobile-form-label-mb', u(7));
+    root.style.setProperty('--mobile-select-h', u(48));
+    root.style.setProperty('--mobile-select-py', u(11));
+    root.style.setProperty('--mobile-select-right', u(38));
+    root.style.setProperty('--mobile-select-left', u(13));
+    root.style.setProperty('--mobile-select-font', u(15));
+    root.style.setProperty('--mobile-input-radius', u(13));
+    root.style.setProperty('--mobile-check-h', u(48));
+    root.style.setProperty('--mobile-check-pad', u(11));
+    root.style.setProperty('--mobile-check-font', u(14));
+    root.style.setProperty('--mobile-check-size', u(21));
+    root.style.setProperty('--mobile-hsk-grid-gap', u(7));
+    root.style.setProperty('--mobile-hsk-btn-h', u(45));
+    root.style.setProperty('--mobile-hsk-btn-py', u(9));
+    root.style.setProperty('--mobile-hsk-btn-font', u(13));
+    root.style.setProperty('--mobile-hsk-btn-radius', u(11));
+    root.style.setProperty('--mobile-capacity-font', u(12));
+    root.style.setProperty('--mobile-capacity-mt', u(8));
+    root.style.setProperty('--mobile-start-h', u(52));
+    root.style.setProperty('--mobile-start-py', u(13));
+    root.style.setProperty('--mobile-start-font', u(15.5));
+    root.style.setProperty('--mobile-slider-font', u(13));
+    root.style.setProperty('--mobile-slider-val-w', u(66));
+    root.style.setProperty('--mobile-slider-h', u(7));
+    root.style.setProperty('--mobile-slider-thumb', u(22));
+    root.style.setProperty('--mobile-card-3-font', u(46));
+    root.style.setProperty('--mobile-card-4-font', u(36));
+    root.style.setProperty('--mobile-card-5-font', u(27));
+    root.style.setProperty('--mobile-card-6-font', u(22));
+    root.style.setProperty('--mobile-card-8-font', u(16));
+    root.style.setProperty('--mobile-card-backmark-font', u(48));
+    root.style.setProperty('--mobile-tag-py', u(3));
+    root.style.setProperty('--mobile-tag-px', u(7));
+    root.style.setProperty('--mobile-modal-edge', u(12));
+    root.style.setProperty('--mobile-modal-pad', u(19));
+    root.style.setProperty('--mobile-modal-radius', u(20));
+    root.style.setProperty('--mobile-modal-header-mb', u(14));
+    root.style.setProperty('--mobile-modal-title', u(19));
+    root.style.setProperty('--mobile-modal-title-h', u(26));
+    root.style.setProperty('--mobile-close-size', u(38));
+    root.style.setProperty('--mobile-close-font', u(18));
+    root.style.setProperty('--mobile-quiz-target', u(58));
+    root.style.setProperty('--mobile-quiz-target-mb', u(6));
+    root.style.setProperty('--mobile-quiz-subtitle', u(14));
+    root.style.setProperty('--mobile-quiz-subtitle-mb', u(15));
+    root.style.setProperty('--mobile-quiz-gap', u(10));
+    root.style.setProperty('--mobile-quiz-btn-h', u(50));
+    root.style.setProperty('--mobile-quiz-btn-pad', u(13));
+    root.style.setProperty('--mobile-quiz-btn-font', u(15));
+    root.style.setProperty('--mobile-quiz-btn-radius', u(13));
+    root.style.setProperty('--mobile-pinyin-quiz-font', u(20));
+    root.style.setProperty('--mobile-pinyin-quiz-h', u(52));
+    root.style.setProperty('--mobile-word-gap', u(10));
+    root.style.setProperty('--mobile-word-pad', u(14));
+    root.style.setProperty('--mobile-word-radius', u(13));
+    root.style.setProperty('--mobile-word-hz', u(29));
+    root.style.setProperty('--mobile-word-py', u(16));
+    root.style.setProperty('--mobile-word-df', u(14));
   };
 
   applyMetrics();

@@ -722,6 +722,106 @@
     .game-footer{ margin-top:4px; }
   }
 
+
+  /* ============================================================
+     MOBILE APP — détection réelle du téléphone (fallback viewport desktop)
+     Cette couche ne s'applique jamais sur PC : la classe mobile-app est ajoutée par JS.
+  ============================================================ */
+  html.mobile-app,
+  html.mobile-app body{
+    width:100%;
+    max-width:100%;
+    height:100%;
+    height:100dvh;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  html.mobile-app body{
+    position:fixed;
+    inset:0;
+    touch-action:manipulation;
+  }
+  html.mobile-app #setupScreen{
+    width:100%;
+    height:100dvh;
+    overflow-y:auto;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  html.mobile-app #gameScreen{
+    --stage-width: var(--mobile-stage-width, calc(100vw - 20px));
+    width:100vw;
+    max-width:none;
+    height:100dvh;
+    min-height:100dvh;
+    margin:0;
+    padding:var(--mobile-pad-y, 6px) 0;
+    justify-content:center;
+    gap:0;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  html.mobile-app body:has(#gameScreen.active) .theme-toggle{ display:none; }
+  html.mobile-app .game-header{
+    width:var(--stage-width); max-width:none;
+    min-height:var(--mobile-header-h, 40px);
+    padding:var(--mobile-header-py, 7px) var(--mobile-header-px, 8px);
+    margin:0 auto var(--mobile-small-gap, 6px);
+    border-radius:var(--mobile-radius, 11px);
+    gap:var(--mobile-stat-gap, 4px);
+  }
+  html.mobile-app .game-stat{ gap:var(--mobile-stat-gap, 4px); min-width:0; }
+  html.mobile-app .game-stat .stat-label{
+    font-size:var(--mobile-label-font, 9px);
+    letter-spacing:var(--mobile-label-spacing, .35px);
+  }
+  html.mobile-app .game-stat .stat-value{ font-size:var(--mobile-value-font, 15px); }
+  html.mobile-app .reveal-panel{
+    width:var(--stage-width); max-width:none;
+    min-height:var(--mobile-reveal-h, 62px); height:var(--mobile-reveal-h, 62px);
+    padding:var(--mobile-reveal-py, 6px) var(--mobile-reveal-px, 10px);
+    margin:0 auto var(--mobile-small-gap, 6px);
+    border-radius:var(--mobile-radius, 11px);
+    overflow:hidden;
+  }
+  html.mobile-app .reveal-inner{ gap:var(--mobile-inner-gap, 3px); }
+  html.mobile-app .reveal-head{ gap:var(--mobile-head-gap, 8px); flex-wrap:nowrap; min-width:0; }
+  html.mobile-app .reveal-hanzi{ font-size:var(--mobile-hanzi-font, 25px); flex-shrink:0; }
+  html.mobile-app .reveal-meta{ gap:var(--mobile-head-gap, 8px); flex-wrap:nowrap; min-width:0; }
+  html.mobile-app .reveal-pinyin{ font-size:var(--mobile-pinyin-font, 14px); white-space:nowrap; }
+  html.mobile-app .reveal-panel .hsk-tag{ padding:2px 6px; font-size:var(--mobile-hsk-font, 9px); }
+  html.mobile-app .reveal-def{
+    margin-top:0; font-size:var(--mobile-def-font, 11px); line-height:1.18;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
+  }
+  html.mobile-app .board-wrapper{
+    flex:0 0 auto; width:100%; min-height:0; padding:0; margin:0;
+  }
+  html.mobile-app .board{
+    width:var(--stage-width); height:var(--stage-width);
+    max-width:none; max-height:none; margin:0 auto;
+  }
+  html.mobile-app .grid-3x3{ gap:var(--mobile-grid-gap-3, 7px); }
+  html.mobile-app .grid-4x4{ gap:var(--mobile-grid-gap-4, 6px); }
+  html.mobile-app .grid-5x5{ gap:var(--mobile-grid-gap-5, 5px); }
+  html.mobile-app .grid-6x6{ gap:var(--mobile-grid-gap-6, 4px); }
+  html.mobile-app .grid-8x8{ gap:var(--mobile-grid-gap-8, 2px); }
+  html.mobile-app .card-face{ border-radius:var(--mobile-card-radius, 9px); }
+  html.mobile-app .game-footer{
+    width:var(--stage-width); max-width:none;
+    min-height:var(--mobile-footer-h, 42px);
+    gap:var(--mobile-footer-gap, 7px);
+    margin:var(--mobile-footer-gap, 7px) auto 0;
+  }
+  html.mobile-app .game-footer .btn{
+    min-height:var(--mobile-footer-h, 42px);
+    padding:var(--mobile-btn-py, 8px) 3px;
+    border-radius:var(--mobile-radius, 11px);
+    font-size:var(--mobile-btn-font, 12.5px);
+  }
+  html.mobile-app .modal-overlay{ padding:10px; }
+  html.mobile-app .modal-content{ max-height:calc(100dvh - 20px); padding:16px; border-radius:18px; }
+
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration:.001ms !important; animation-iteration-count:1 !important;
@@ -977,7 +1077,66 @@ function renderColoredPinyinHtml(pinyinStr) {
   }).join(' ');
 }
 
+function initRealMobileLayout(){
+  const ua = navigator.userAgent || '';
+  const uaMobile = /Android|iPhone|iPad|iPod|Mobile|IEMobile|Opera Mini/i.test(ua);
+  const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  const touch = (navigator.maxTouchPoints || 0) > 0;
+  const sw = Math.min(screen.width || 9999, screen.height || 9999);
+  const isPhoneLike = uaMobile || ((coarse || touch) && sw <= 900);
+  if (!isPhoneLike) return;
+
+  const root = document.documentElement;
+  root.classList.add('mobile-app');
+
+  const applyMetrics = () => {
+    const layoutW = window.innerWidth || document.documentElement.clientWidth || screen.width || 390;
+    const physicalCssW = Math.min(screen.width || layoutW, screen.height || layoutW);
+    /* En mode « site pour ordinateur », innerWidth peut valoir ~980 sur un téléphone de ~360px. */
+    const scale = Math.max(1, Math.min(3.2, layoutW / Math.max(physicalCssW, 1)));
+    const u = n => `${(n * scale).toFixed(2)}px`;
+    const edge = 10 * scale;
+    const stage = Math.max(240, layoutW - edge * 2);
+
+    root.style.setProperty('--mobile-stage-width', `${stage}px`);
+    root.style.setProperty('--mobile-pad-y', u(6));
+    root.style.setProperty('--mobile-small-gap', u(6));
+    root.style.setProperty('--mobile-header-h', u(40));
+    root.style.setProperty('--mobile-header-py', u(7));
+    root.style.setProperty('--mobile-header-px', u(8));
+    root.style.setProperty('--mobile-radius', u(11));
+    root.style.setProperty('--mobile-stat-gap', u(4));
+    root.style.setProperty('--mobile-label-font', u(9));
+    root.style.setProperty('--mobile-label-spacing', u(.35));
+    root.style.setProperty('--mobile-value-font', u(15));
+    root.style.setProperty('--mobile-reveal-h', u(62));
+    root.style.setProperty('--mobile-reveal-py', u(6));
+    root.style.setProperty('--mobile-reveal-px', u(10));
+    root.style.setProperty('--mobile-inner-gap', u(3));
+    root.style.setProperty('--mobile-head-gap', u(8));
+    root.style.setProperty('--mobile-hanzi-font', u(25));
+    root.style.setProperty('--mobile-pinyin-font', u(14));
+    root.style.setProperty('--mobile-hsk-font', u(9));
+    root.style.setProperty('--mobile-def-font', u(11));
+    root.style.setProperty('--mobile-grid-gap-3', u(7));
+    root.style.setProperty('--mobile-grid-gap-4', u(6));
+    root.style.setProperty('--mobile-grid-gap-5', u(5));
+    root.style.setProperty('--mobile-grid-gap-6', u(4));
+    root.style.setProperty('--mobile-grid-gap-8', u(2));
+    root.style.setProperty('--mobile-card-radius', u(9));
+    root.style.setProperty('--mobile-footer-h', u(42));
+    root.style.setProperty('--mobile-footer-gap', u(7));
+    root.style.setProperty('--mobile-btn-py', u(8));
+    root.style.setProperty('--mobile-btn-font', u(12.5));
+  };
+
+  applyMetrics();
+  window.addEventListener('resize', applyMetrics, { passive:true });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', applyMetrics, { passive:true });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initRealMobileLayout();
   initTheme();
   setupUIEventListeners();
   loadDataFiles();

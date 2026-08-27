@@ -1,410 +1,686 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Memory Chinois HSK</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --bg: #0f111a;
-      --panel: #1a1d2d;
-      --card-bg: #252a40;
-      --accent: #6366f1;
-      --accent-hover: #4f46e5;
-      --correct: #10b981;
-      --incorrect: #ef4444;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --shadow: 0 10px 25px rgba(0,0,0,0.5);
-      --border: #2e344e;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#121014" id="metaThemeColor">
+<title>忆 · Memory HSK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-      /* COULEURS HSK OFFICIELLES */
-      --hsk1: #08d259; /* Vert */
-      --hsk2: #229fff; /* Bleu clair */
-      --hsk3: #fccf46; /* Jaune */
-      --hsk4: #ffa52f; /* Orange */
-      --hsk5: #ff47c2; /* Rose */
-      --hsk6: #991b1b; /* Bordeaux / Rouge foncé */
-      --hsk79: #86198f; /* Rose foncé / Violet */
-    }
+<style>
+  /* ============================================================
+     TOKENS & COULEURS
+  ============================================================ */
+  :root{
+    --bg:#121014;
+    --bg-wash-1: rgba(201,162,74,.10);
+    --bg-wash-2: rgba(95,168,137,.08);
+    --bg-wash-3: rgba(193,80,60,.08);
+    --panel:#1b1820;
+    --panel-2:#221e27;
+    --card-bg:#241f28;
+    --card-face:#2a2430;
+    --card-back-bg: #18141c; /* Verso plus sombre en dark */
+    --card-front-bg: #2d2633; /* Recto plus clair en dark */
+    --ink:#f3ead6;
+    --ink-soft:#a89f8e;
+    --border:#342d38;
+    --border-soft: rgba(255,255,255,.06);
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    --gold:#c9a24a;
+    --gold-soft:#e8cf8a;
+    --jade:#5fa889;
+    --jade-soft:#8fc7ab;
+    --cinnabar:#c1503c;
+    --cinnabar-soft:#dd8770;
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text-main);
-      overflow: hidden;
-      height: 100vh;
-      height: 100dvh;
-      -webkit-tap-highlight-color: transparent;
-    }
+    --accent: var(--gold);
+    --accent-strong: var(--gold-soft);
+    --on-accent: #1b1610;
+    --correct: var(--jade);
+    --incorrect: var(--cinnabar);
 
-    .hanzi {
-      font-family: 'Noto Sans SC', sans-serif;
-      font-weight: 900;
-    }
+    --shadow-sm: 0 2px 6px rgba(0,0,0,.35);
+    --shadow-md: 0 10px 24px rgba(0,0,0,.45);
+    --shadow-lg: 0 24px 50px rgba(0,0,0,.55), 0 6px 14px rgba(0,0,0,.35);
+    --shadow-panel: 0 20px 44px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.03);
 
-    /* BADGES HSK */
-    .hsk-tag {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #ffffff !important;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      flex-shrink: 0;
-      line-height: 1;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
-    }
-    .hsk-tag.lvl-1 { background-color: var(--hsk1); }
-    .hsk-tag.lvl-2 { background-color: var(--hsk2); }
-    .hsk-tag.lvl-3 { background-color: var(--hsk3); }
-    .hsk-tag.lvl-4 { background-color: var(--hsk4); }
-    .hsk-tag.lvl-5 { background-color: var(--hsk5); }
-    .hsk-tag.lvl-6 { background-color: var(--hsk6); }
-    .hsk-tag.lvl-7 { background-color: var(--hsk79); }
+    --hsk1:#3fae67; --hsk2:#3f8ecb; --hsk3:#d9b23c; --hsk4:#d98a2f; --hsk5:#c9578f; --hsk6:#b0453a; --hsk7:#9457a8;
 
-    /* ECRANS */
-    .screen {
-      display: none;
-      height: 100%;
-      padding: 15px;
-      flex-direction: column;
-      align-items: center;
-    }
-    .screen.active { display: flex; }
-
-    #setupScreen { overflow-y: auto; justify-content: flex-start; }
+    --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 26px;
     
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: var(--shadow);
-      margin-bottom: 10px;
+    --font-display: 'KaiTi', 'STKaiti', 'Kaiti SC', 'Noto Serif SC', serif;
+    --font-ui: 'Plus Jakarta Sans', 'Inter', sans-serif;
+
+    --game-board-size: min(100%, calc(100dvh - 250px));
+  }
+
+  html[data-theme="light"]{
+    --bg:#eef1e2;
+    --bg-wash-1: rgba(31,138,110,.14);
+    --bg-wash-2: rgba(200,16,46,.10);
+    --bg-wash-3: rgba(200,150,30,.16);
+    --panel: rgba(255,253,246,.86);
+    --panel-2: #fbf7ea;
+    --card-bg:#fffdf7;
+    --card-face:#fff8ea;
+    --card-back-bg: #e5dbc4; /* Verso parchemin ombré plus foncé en light */
+    --card-front-bg: #fffeea; /* Recto parchemin lumineux */
+    --ink:#2c2826; 
+    --ink-soft:#766c5c;
+    --border:#e2d7bd;
+    --border-soft: rgba(36,31,25,.07);
+
+    --gold:#b9821a;
+    --gold-soft:#8a5e0d;
+    --jade:#1f8a6e;
+    --jade-soft:#0f5f49;
+    --cinnabar:#c8102e;
+    --cinnabar-soft:#8f0b21;
+
+    --accent: var(--jade);
+    --accent-strong: var(--jade-soft);
+    --on-accent: #ffffff;
+    --correct: var(--jade);
+    --incorrect: var(--cinnabar);
+
+    --shadow-sm: 0 2px 6px rgba(90,60,20,.12);
+    --shadow-md: 0 10px 22px rgba(90,60,20,.14);
+    --shadow-lg: 0 22px 44px rgba(90,60,20,.20), 0 6px 14px rgba(90,60,20,.10);
+    --shadow-panel: 0 20px 40px rgba(90,60,20,.16), inset 0 1px 0 rgba(255,255,255,.6);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+  html,body{ height:100%; }
+  body{
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--ink);
+    height:100dvh;
+    overflow:hidden;
+    position:relative;
+    transition: background .35s ease, color .35s ease;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:-10%;
+    background:
+      radial-gradient(circle at 12% 8%, var(--bg-wash-1), transparent 42%),
+      radial-gradient(circle at 88% 14%, var(--bg-wash-3), transparent 40%),
+      radial-gradient(circle at 30% 95%, var(--bg-wash-2), transparent 45%);
+    pointer-events:none; z-index:0;
+    transition: opacity .4s ease;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none; z-index:0; opacity:.5; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
+  }
+  html[data-theme="light"] body::after{ opacity:.35; }
+
+  ::selection{ background: var(--accent); color: var(--on-accent); }
+
+  .hanzi{ font-family: var(--font-display); font-weight: 700; }
+
+  /* ============================================================
+     THEME TOGGLE
+  ============================================================ */
+  .theme-toggle{
+    position: fixed; top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
+    z-index: 500;
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--panel); border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color: var(--accent);
+    transition: transform .25s ease, box-shadow .25s ease, background .3s ease;
+  }
+  .theme-toggle:hover{ transform: translateY(-2px) rotate(12deg); box-shadow: var(--shadow-md); }
+  .theme-toggle svg{ width:20px; height:20px; }
+  .theme-toggle .i-sun{ display:none; }
+  html[data-theme="light"] .theme-toggle .i-sun{ display:block; }
+  html[data-theme="light"] .theme-toggle .i-moon{ display:none; }
+
+  /* ============================================================
+     BADGES HSK & PINYIN
+  ============================================================ */
+  .hsk-tag{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding: 3px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 800; letter-spacing:.4px;
+    color:#fff !important; text-transform:uppercase; flex-shrink:0; line-height:1.2;
+    box-shadow: 0 2px 4px rgba(0,0,0,.25);
+  }
+  .hsk-tag.lvl-1{ background: var(--hsk1); } .hsk-tag.lvl-2{ background: var(--hsk2); }
+  .hsk-tag.lvl-3{ background: var(--hsk3); } .hsk-tag.lvl-4{ background: var(--hsk4); }
+  .hsk-tag.lvl-5{ background: var(--hsk5); } .hsk-tag.lvl-6{ background: var(--hsk6); }
+  .hsk-tag.lvl-7{ background: var(--hsk7); }
+
+  .py-syl{ font-weight:600; }
+  .py-syl.tone1{ color:#c1503c; } .py-syl.tone2{ color:#c9902f; }
+  .py-syl.tone3{ color:#3f9d5f; } .py-syl.tone4{ color:#3f7fc9; }
+  .py-syl.tone5{ color: var(--ink-soft); font-weight:500;}
+  html[data-theme="light"] .py-syl.tone1{ color:#c8102e; }
+  html[data-theme="light"] .py-syl.tone2{ color:#b9821a; }
+  html[data-theme="light"] .py-syl.tone3{ color:#1f8a6e; }
+  html[data-theme="light"] .py-syl.tone4{ color:#2e5fa6; }
+
+  /* ============================================================
+     ECRANS
+  ============================================================ */
+  .screen{ display:none; height:100%; height:100dvh; padding: 14px; padding-top: max(14px, env(safe-area-inset-top));
+    flex-direction:column; align-items:center; position:relative; z-index:1; }
+  .screen.active{ display:flex; }
+  #setupScreen{ overflow-y:auto; justify-content:flex-start; scrollbar-width:thin; }
+  #setupScreen::-webkit-scrollbar{ width:6px; }
+  #setupScreen::-webkit-scrollbar-thumb{ background: var(--border); border-radius:4px; }
+
+  .brand{ display:flex; flex-direction:column; align-items:center; gap:4px; margin: 6px 0 18px; text-align:center; }
+  .brand-seal{
+    width:52px; height:52px; border-radius:14px;
+    background: linear-gradient(155deg, var(--cinnabar), var(--cinnabar-soft));
+    display:flex; align-items:center; justify-content:center;
+    color:#fff8ea; font-family: var(--font-display); font-weight:900; font-size:26px;
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,.25);
+    transform: rotate(-4deg); margin-bottom:6px;
+  }
+  .brand-eyebrow{ font-size:11.5px; letter-spacing:2.5px; text-transform:uppercase; color: var(--accent); font-weight:700; }
+  .brand h1{ font-family: var(--font-display); font-size: clamp(26px,6vw,34px); font-weight:900; color: var(--ink); }
+  .brand h1 .accent-word{ color: var(--accent); }
+
+  .status-chips{ display:flex; gap:8px; margin-bottom:16px; justify-content:center; flex-wrap:wrap; }
+  .chip{
+    display:flex; align-items:center; gap:6px;
+    padding: 6px 12px; border-radius:20px; font-size:11.5px; font-weight:600;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--ink-soft);
+  }
+  .chip::before{ content:""; width:6px; height:6px; border-radius:50%; background: var(--ink-soft); flex-shrink:0; }
+  .chip.ready{ color: var(--correct); border-color: color-mix(in srgb, var(--correct) 45%, transparent); background: color-mix(in srgb, var(--correct) 12%, var(--panel-2)); }
+  .chip.ready::before{ background: var(--correct); }
+  .chip.error{ color: var(--incorrect); border-color: color-mix(in srgb, var(--incorrect) 45%, transparent); background: color-mix(in srgb, var(--incorrect) 12%, var(--panel-2)); }
+  .chip.error::before{ background: var(--incorrect); }
+
+  .panel{
+    background: var(--panel); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    border: 1px solid var(--border); border-radius: var(--r-lg);
+    padding: 22px; width:100%; max-width: 640px;
+    box-shadow: var(--shadow-panel); margin-bottom: 14px;
+  }
+
+  .section-label{
+    display:flex; align-items:center; gap:8px;
+    font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase;
+    color: var(--accent); margin-bottom:14px;
+  }
+  .section-label svg{ width:15px; height:15px; }
+  .section-label::after{ content:""; flex:1; height:1px; background: var(--border); }
+
+  .settings-grid{ display:grid; grid-template-columns: 1fr; gap:16px; }
+  @media (min-width: 640px){ .settings-grid{ grid-template-columns: 1fr 1fr; column-gap: 18px; } .full-span{ grid-column: 1 / -1; } }
+
+  .form-group label{ display:flex; align-items:center; justify-content:space-between; font-size:12.5px; color: var(--ink-soft); margin-bottom:7px; font-weight:700; letter-spacing:.2px; }
+
+  select{
+    width:100%; padding: 11px 38px 11px 13px; border-radius: var(--r-md);
+    background: var(--card-bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c9a24a' stroke-width='2.5' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center;
+    background-size: 13px; border: 1px solid var(--border); color: var(--ink);
+    font-family: var(--font-ui); font-size:14px; font-weight:600; outline:none;
+    appearance:none; -webkit-appearance:none; cursor:pointer; transition: border-color .2s ease;
+  }
+  select:hover, select:focus{ border-color: var(--accent); }
+  input[type="file"]{ width:100%; padding:9px; border-radius: var(--r-md); background: var(--card-bg); border:1px solid var(--border); color: var(--ink-soft); font-size:12.5px; }
+
+  .slider-container{ display:flex; align-items:center; gap:12px; }
+  .slider-val{ min-width:64px; text-align:right; font-weight:800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  input[type="range"]{ -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:4px; background: var(--border); outline:none; cursor:pointer; }
+  input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background: var(--accent); border: 3px solid var(--panel); box-shadow: var(--shadow-sm); }
+
+  .hsk-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(64px,1fr)); gap:7px; }
+  .btn-hsk{
+    position:relative; padding: 9px 4px; border-radius: 10px; border: 1.5px solid var(--border);
+    background: var(--card-bg); color: var(--ink-soft); cursor:pointer; font-weight:800; font-size:12px;
+    transition: .18s ease; font-family: var(--font-ui);
+  }
+  .btn-hsk::before{ content:""; position:absolute; left:8px; right:8px; bottom:5px; height:3px; border-radius:2px; background: var(--lvl-color, var(--accent)); opacity:0; transition:opacity .18s ease; }
+  .btn-hsk[data-lvl="1"]{ --lvl-color: var(--hsk1); } .btn-hsk[data-lvl="2"]{ --lvl-color: var(--hsk2); }
+  .btn-hsk[data-lvl="3"]{ --lvl-color: var(--hsk3); } .btn-hsk[data-lvl="4"]{ --lvl-color: var(--hsk4); }
+  .btn-hsk[data-lvl="5"]{ --lvl-color: var(--hsk5); } .btn-hsk[data-lvl="6"]{ --lvl-color: var(--hsk6); }
+  .btn-hsk[data-lvl="7"]{ --lvl-color: var(--hsk7); }
+  .btn-hsk:hover{ border-color: var(--lvl-color, var(--accent)); color: var(--ink); }
+  .btn-hsk.active{ border-color: var(--lvl-color, var(--accent)); background: color-mix(in srgb, var(--lvl-color, var(--accent)) 16%, var(--card-bg)); color: var(--ink); }
+  .btn-hsk.active::before{ opacity:1; }
+
+  .checkbox-wrap{ display:flex; align-items:center; gap:10px; background: var(--card-bg); padding:12px; border-radius: var(--r-md); border:1px solid var(--border); cursor:pointer; font-size:13px; font-weight:600; transition: border-color .2s; }
+  .checkbox-wrap:hover{ border-color: var(--accent); }
+  .checkbox-wrap input{ width:19px; height:19px; accent-color: var(--accent); cursor:pointer; flex-shrink:0; }
+
+  .capacity-hint{ font-size:11.5px; margin-top:8px; color: var(--ink-soft); display:flex; align-items:center; gap:6px; min-height:16px; }
+  .capacity-hint.ok{ color: var(--correct); font-weight:700; }
+  .capacity-hint.bad{ color: var(--incorrect); font-weight:700; }
+
+  .btn{
+    width:100%; padding:14px; border-radius: var(--r-md); border:none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: var(--on-accent); font-size:15px; font-weight:800; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 45%, transparent);
+    font-family: var(--font-ui);
+  }
+  .btn svg{ width:17px; height:17px; }
+  .btn:hover:not(:disabled){ transform: translateY(-2px); filter: brightness(1.06); }
+  .btn:active:not(:disabled){ transform: translateY(0); }
+  .btn:disabled{ background: var(--border); color: var(--ink-soft); cursor:not-allowed; box-shadow:none; }
+  .btn-secondary{ background: var(--panel-2); color: var(--ink); border:1px solid var(--border); box-shadow:none; }
+  .btn-secondary:hover:not(:disabled){ border-color: var(--accent); background: var(--card-bg); filter:none; }
+
+  #btnStart { max-width: 640px; margin: 0 auto; }
+
+  /* ============================================================
+     JEU — STRUCTURE
+  ============================================================ */
+  #gameScreen{ max-width:720px; width:100%; margin:0 auto; display:none; flex-direction:column; height:100%; height:100dvh; overflow:hidden; justify-content: center; padding: 10px 0;}
+  #gameScreen.active{ display:flex; }
+
+  /* BANDEAU DES COMPTEURS */
+  .game-header{
+    flex-shrink:0; background: var(--panel); border:1px solid var(--border); border-radius: var(--r-md);
+    padding: 12px 18px; box-shadow: var(--shadow-sm);
+    width: var(--stage-width, min(100%, calc(100dvh - 280px))); max-width:620px; margin: 0 auto 12px;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .game-stat{ display:flex; flex-direction:row; align-items:baseline; justify-content:center; gap:6px; flex:1; white-space:nowrap; position:relative; }
+  .game-stat + .game-stat::before{ content:""; position:absolute; left:0; top:15%; bottom:15%; width:1px; background: var(--border); }
+  .game-stat .stat-label{ font-size:11px; color: var(--ink-soft); font-weight:700; text-transform:uppercase; letter-spacing:.6px; }
+  .game-stat .stat-value{ font-size:17px; font-weight:800; color: var(--ink); font-variant-numeric: tabular-nums; font-family: var(--font-ui); }
+
+  /* PANNEAU DE RÉVÉLATION */
+  .reveal-panel{
+    flex-shrink:0; min-height: 85px; height:auto;
+    width: var(--stage-width, min(100%, calc(100dvh - 280px))); max-width:620px; margin: 0 auto 16px;
+    background: var(--panel); border: 1.5px solid var(--border); border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    display:flex; align-items:center; justify-content:center; padding: 12px 20px;
+    opacity: 0; transform: translateY(-6px) scale(.98);
+    pointer-events:none;
+    transition: opacity .28s cubic-bezier(.2,.9,.3,1), transform .28s cubic-bezier(.2,.9,.3,1), border-color .28s, box-shadow .28s, width .2s ease;
+  }
+  .reveal-panel.active{
+    opacity:1; transform: translateY(0) scale(1); pointer-events:auto;
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    box-shadow: var(--shadow-md), 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .reveal-inner{ width:100%; display:flex; flex-direction:column; gap:6px; text-align:center; }
+  .reveal-head{ display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; }
+  .reveal-hanzi{ font-size:32px; color: var(--ink); line-height:1; font-weight:900; }
+  .reveal-meta{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; } /* Garde l'écart de 16px entre pinyin et hsk */
+  .reveal-pinyin{ font-size:18px; font-weight:600; letter-spacing:.2px; display:inline-flex; align-items:center; } /* Alignement vertical propre */
+  .reveal-def{ font-size:15px; color: var(--ink-soft); line-height:1.45; margin-top:2px; }
+
+  .board-wrapper{
+    flex:1 1 auto; min-height:0; width:100%;
+    display:flex; align-items:center; justify-content:center;
+    padding: 0;
+  }
+
+  /* GRILLE STRICTEMENT CARRÉE */
+  .board{
+    display:grid; gap:8px;
+    width: var(--stage-width, min(100%, calc(100dvh - 280px)));
+    height: var(--stage-width, min(100%, calc(100dvh - 280px)));
+    max-width:620px; max-height:620px;
+    aspect-ratio: 1 / 1 !important;
+    perspective: 1200px;
+  }
+
+  .grid-3x3{ grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap:10px; }
+  .grid-4x4{ grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap:8px; }
+  .grid-5x5{ grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap:6px; }
+  .grid-6x6{ grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap:5px; }
+  .grid-8x8{ grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); gap:3px; }
+
+  /* FOOTER */
+  .game-footer{ 
+    flex-shrink:0; display:flex; gap:12px; 
+    width: var(--stage-width, min(100%, calc(100dvh - 280px))); max-width:620px; margin: 16px auto max(16px, env(safe-area-inset-bottom)); 
+  }
+  .game-footer .btn{ flex: 1; padding:12px 4px; font-size:14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ============================================================
+     CARTES
+  ============================================================ */
+  .card{
+    position:relative; width:100%; height:100%; cursor:pointer;
+    perspective: 1200px;
+    aspect-ratio: 1 / 1;
+  }
+  .card-inner{
+    position:relative; width:100%; height:100%;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.34,1.15,.32,1);
+  }
+  .card:active .card-inner{ transform: scale(.95); }
+  .card.flipped .card-inner{ transform: rotateY(180deg); }
+  .card.flipped:active .card-inner{ transform: rotateY(180deg) scale(.95); }
+
+  .card-face{
+    position:absolute; inset:0; width:100%; height:100%;
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    border-radius: 12px;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:2px;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+
+  /* DOS DE CARTE (Face cachée du jeu - Nuance plus sombre et contrastée) */
+  .card-front{
+    transform: rotateY(0deg);
+    background: linear-gradient(135deg, var(--card-back-bg), var(--card-face));
+    border: 1.5px solid color-mix(in srgb, var(--gold) 45%, var(--border));
+    box-shadow: 0 3px 6px rgba(0,0,0,.25), inset 0 0 0 3px var(--card-bg), inset 0 0 0 5px color-mix(in srgb, var(--gold) 55%, transparent);
+  }
+  .card-front::after {
+    content: "忆";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: clamp(34px, 55%, 72px); /* Caractère agrandi */
+    color: var(--gold);
+    opacity: 0.38; /* Contraste forcé et net */
+    font-weight: 700;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .card:hover .card-front{
+    box-shadow: 0 6px 12px rgba(0,0,0,.3), inset 0 0 0 3px var(--card-bg), inset 0 0 0 5px color-mix(in srgb, var(--gold) 85%, transparent);
+  }
+
+  /* VARIABLES POLICE SELON GRILLE */
+  .grid-3x3 .card-back { --base-font: clamp(32px, 10vw, 64px); }
+  .grid-4x4 .card-back { --base-font: clamp(24px, 7vw, 48px); }
+  .grid-5x5 .card-back { --base-font: clamp(18px, 5.5vw, 34px); }
+  .grid-6x6 .card-back { --base-font: clamp(15px, 4.5vw, 28px); }
+  .grid-8x8 .card-back { --base-font: clamp(11px, 3.5vw, 20px); }
+
+  /* FACE RÉVÉLÉE (Le Mot Chinois - Teinte claire et lumineuse) */
+  .card-back{
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, var(--card-front-bg), var(--card-bg));
+    color: var(--ink); /* Doux noir d'encre */
+    border: 1.5px solid var(--border);
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+    white-space: nowrap;
+    font-family: var(--font-display); 
+    font-weight: 700;
+    font-size: var(--base-font);
+  }
+
+  /* Ajustements pour mots longs */
+  .card-back.len-2 { font-size: calc(var(--base-font) * 0.75); }
+  .card-back.len-3 { font-size: calc(var(--base-font) * 0.55); }
+  .card-back.len-4 { font-size: calc(var(--base-font) * 0.40); }
+  .card-back.len-long { font-size: calc(var(--base-font) * 0.32); }
+
+  .card.empty-trap .card-back{
+    background: linear-gradient(150deg, color-mix(in srgb, var(--incorrect) 15%, var(--card-front-bg)), var(--card-bg));
+    border-color: var(--incorrect); color: var(--incorrect);
+  }
+
+  /* CARTE VALIDÉE (Même fond clair, police noire maintenue, contour vert distinctif) */
+  .card.matched .card-inner .card-back{
+    background: linear-gradient(135deg, var(--card-front-bg), var(--card-bg));
+    border-color: var(--correct);
+    border-width: 2.5px;
+    color: var(--ink); /* Police noire/encre conservée */
+    box-shadow: 0 4px 8px rgba(0,0,0,.1), inset 0 0 0 2px color-mix(in srgb, var(--correct) 35%, transparent);
+    cursor: pointer;
+  }
+  .card.matched:hover .card-inner {
+    transform: rotateY(180deg) translateY(-4px) scale(1.035);
+  }
+
+  @keyframes shakeBoard{
+    0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-8px);} 40%{ transform:translateX(8px);}
+    60%{ transform:translateX(-4px);} 80%{ transform:translateX(4px);}
+  }
+  .shake{ animation: shakeBoard .5s ease-in-out; }
+
+  /* ============================================================
+     MODALS
+  ============================================================ */
+  .modal-overlay{
+    position:fixed; inset:0; background: rgba(10,8,6,.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    display:none; align-items:center; justify-content:center; z-index:1000;
+    padding:14px; opacity:0; transition: opacity .22s ease;
+  }
+  .modal-overlay.active{ display:flex; opacity:1; }
+
+  .modal-content{
+    background: var(--panel); border:1px solid var(--border); border-radius: var(--r-xl);
+    padding:22px; width:100%; max-width:500px; box-shadow: var(--shadow-lg);
+    max-height:85dvh; display:flex; flex-direction:column;
+    transform: translateY(10px) scale(.98); animation: modalIn .28s cubic-bezier(.2,.9,.3,1) forwards;
+  }
+  @keyframes modalIn{ to{ transform: translateY(0) scale(1); } }
+  .modal-content.victory{ border-color: var(--gold); box-shadow: var(--shadow-lg), 0 0 0 4px color-mix(in srgb, var(--gold) 20%, transparent); }
+
+  .modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-shrink:0; gap:10px; }
+  .modal-title{ font-size:18px; font-weight:800; min-height:24px; font-family: var(--font-ui); }
+  .modal-close{ background: var(--panel-2); border:1px solid var(--border); color: var(--ink-soft); width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer; flex-shrink:0; transition:.2s; display:flex; align-items:center; justify-content:center; }
+  .modal-close:hover{ color: var(--incorrect); border-color: var(--incorrect); }
+
+  .quiz-target{ text-align:center; font-size:50px; margin-bottom:4px; color: var(--accent); flex-shrink:0; font-family: var(--font-display); }
+  .quiz-subtitle{ text-align:center; color: var(--ink-soft); margin-bottom:16px; font-size:13px; flex-shrink:0; font-weight:600; }
+  .quiz-options{ display:flex; flex-direction:column; gap:9px; overflow-y:auto; padding-right:2px; }
+
+  .quiz-btn{
+    background: var(--card-bg); border:1.5px solid var(--border); color: var(--ink);
+    padding:13px; border-radius: var(--r-md); font-size:14px; cursor:pointer; transition:.18s;
+    text-align:left; line-height:1.4; display:flex; align-items:center; gap:9px; font-family: var(--font-ui); font-weight:500;
+  }
+  .quiz-btn:hover:not(:disabled){ background: var(--panel-2); border-color: var(--accent); transform: translateX(2px); }
+  .quiz-btn.correct{ background: color-mix(in srgb, var(--correct) 22%, var(--card-bg)) !important; border-color: var(--correct) !important; color: var(--ink) !important; }
+  .quiz-btn.wrong{ background: color-mix(in srgb, var(--incorrect) 22%, var(--card-bg)) !important; border-color: var(--incorrect) !important; color: var(--ink) !important; opacity:.75; }
+
+  .pinyin-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:9px; }
+  .pinyin-grid .quiz-btn{ justify-content:center; font-size:19px; padding:12px; font-family: var(--font-ui); font-weight:700; }
+  .pinyin-grid .quiz-btn:last-child{ grid-column: span 2; }
+
+  .words-list{ overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:2px; flex:1; }
+  .word-item{ background: var(--card-bg); border:1px solid var(--border); border-radius: var(--r-md); padding:14px; transition: border-color .18s, transform .18s; }
+  .word-item:hover{ border-color: var(--accent); transform: translateY(-1px); }
+  .word-header{ display:flex; align-items:center; gap:9px; margin-bottom:4px; }
+  .word-hz{ font-size:25px; color: var(--ink); }
+  .word-py{ font-size:14.5px; margin-bottom:5px; display:block; }
+  .word-df{ font-size:13px; color: var(--ink-soft); line-height:1.5; display:block; }
+
+  .toast{
+    position:fixed; top: max(18px, env(safe-area-inset-top)); left:50%; transform: translateX(-50%) translateY(-120px);
+    background: var(--accent); color: var(--on-accent); padding:11px 22px; border-radius:30px;
+    font-size:13px; font-weight:800; box-shadow: var(--shadow-lg); transition: transform .32s cubic-bezier(.3,.9,.3,1); z-index:2000;
+    display:flex; align-items:center; gap:8px;
+  }
+  .toast.show{ transform: translateX(-50%) translateY(0); }
+  .toast.error{ background: var(--incorrect); color:#fff8ea; }
+  .toast.success{ background: var(--correct); color:#fff8ea; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:.001ms !important; animation-iteration-count:1 !important;
+      transition-duration:.001ms !important; scroll-behavior:auto !important;
     }
-
-    h1, h2 { text-align: center; margin-bottom: 20px; }
-    h1 { font-size: 28px; font-weight: 800; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;}
-    select, input[type="range"], input[type="file"] { width: 100%; padding: 12px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--border); color: white; font-family: 'Inter'; font-size: 15px; outline: none; }
-    
-    .slider-container { display: flex; align-items: center; gap: 15px; }
-    .slider-val { min-width: 60px; text-align: right; font-weight: bold; color: var(--accent); }
-
-    .hsk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(65px, 1fr)); gap: 8px; }
-    .btn-hsk { padding: 10px 5px; border-radius: 10px; border: 2px solid var(--border); background: var(--card-bg); color: var(--text-muted); cursor: pointer; font-weight: bold; transition: 0.2s; }
-    .btn-hsk.active { border-color: var(--accent); background: rgba(99, 102, 241, 0.2); color: var(--text-main); }
-
-    .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(99,102,241,0.4); }
-    .btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
-    .btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none; }
-    .btn-secondary { background: var(--card-bg); border: 1px solid var(--border); box-shadow: none; }
-    .btn-secondary:hover { background: var(--border); }
-
-    .status-chips { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
-    .chip { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; background: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted); transition: all 0.3s; }
-    .chip.ready { color: var(--correct); border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.12); }
-    .chip.error { color: var(--incorrect); border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.12); }
-
-    .checkbox-wrap { display: flex; align-items: center; gap: 10px; background: var(--card-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; }
-    .checkbox-wrap input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
-
-    #gameScreen { max-width: 900px; width: 100%; margin: 0 auto; }
-    .game-header { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--panel); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border); }
-    .game-stat { display: flex; flex-direction: column; align-items: center; flex: 1; }
-    .game-stat span:first-child { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    .game-stat span:last-child { font-size: 20px; font-weight: bold; color: var(--accent); }
-    
-    .board-wrapper {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      margin-bottom: 15px;
-    }
-
-    .board {
-      display: grid;
-      gap: 8px;
-      max-width: 100%;
-      max-height: 100%;
-      aspect-ratio: 1;
-      perspective: 1000px;
-    }
-    @media (min-aspect-ratio: 1/1) {
-      .board { width: auto; height: 100%; }
-    }
-
-    .grid-4x4 { grid-template-columns: repeat(4, 1fr); }
-    .grid-6x6 { grid-template-columns: repeat(6, 1fr); }
-    .grid-8x8 { grid-template-columns: repeat(8, 1fr); gap: 4px; }
-
-    .game-footer { flex-shrink: 0; display: flex; gap: 15px; width: 100%; }
-
-    .card {
-      position: relative;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
-    }
-    .card.flipped { transform: rotateY(180deg); }
-
-    .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      user-select: none;
-    }
-    .card-front {
-      background: linear-gradient(135deg, var(--card-bg), var(--panel));
-      border: 2px solid var(--border);
-      color: var(--accent);
-      font-size: 24px;
-    }
-    .card-front::after { content: "★"; opacity: 0.15; }
-    
-    .card-back {
-      background: var(--accent);
-      color: white;
-      transform: rotateY(180deg);
-      border: 2px solid #818cf8;
-      font-size: clamp(16px, 4vw, 42px);
-    }
-    
-    .card.matched .card-back { 
-      background: rgba(16, 185, 129, 0.2);
-      border-color: var(--correct);
-      box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2);
-      cursor: help; 
-    }
-    .card.matched .card-back::before {
-      content: '✓';
-      position: absolute;
-      top: 2px;
-      right: 5px;
-      font-size: 14px;
-      color: var(--correct);
-      font-weight: bold;
-    }
-
-    @keyframes shakeBoard {
-      0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-10px); }
-      40% { transform: translateX(10px); }
-      60% { transform: translateX(-5px); }
-      80% { transform: translateX(5px); }
-    }
-    .shake { animation: shakeBoard 0.5s ease-in-out; }
-
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-      display: none; align-items: center; justify-content: center; z-index: 1000;
-      padding: 15px; opacity: 0; transition: opacity 0.3s;
-    }
-    .modal-overlay.active { display: flex; opacity: 1; }
-    
-    .modal-content {
-      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
-      padding: 24px; width: 100%; max-width: 500px; box-shadow: var(--shadow);
-      max-height: 90vh; display: flex; flex-direction: column;
-    }
-    
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; }
-    .modal-title { font-size: 20px; font-weight: bold; }
-    .modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
-
-    .quiz-target { text-align: center; font-size: 60px; margin-bottom: 10px; color: var(--accent); text-shadow: 0 2px 10px rgba(99,102,241,0.3); flex-shrink: 0;}
-    .quiz-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 15px; flex-shrink: 0;}
-    .quiz-options { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px;}
-    
-    .quiz-btn {
-      background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main);
-      padding: 14px; border-radius: 12px; font-size: 15px; cursor: pointer; transition: 0.2s;
-      text-align: left; line-height: 1.5;
-      display: flex; align-items: flex-start; gap: 10px;
-    }
-    .quiz-btn:hover:not(:disabled) { background: var(--border); border-color: var(--accent); }
-    .quiz-btn.correct { background: var(--correct) !important; color: white !important; border-color: var(--correct) !important; }
-    .quiz-btn.wrong { background: var(--incorrect) !important; color: white !important; border-color: var(--incorrect) !important; opacity: 0.7; }
-    .quiz-btn:disabled { cursor: default; }
-
-    .pinyin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .pinyin-grid .quiz-btn { justify-content: center; font-size: 22px; padding: 12px; }
-    .pinyin-grid .quiz-btn:last-child { grid-column: span 2; }
-
-    .words-list { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px; flex: 1;}
-    .word-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .word-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-    .word-hz { font-size: 28px; color: var(--text-main); }
-    .word-py { font-size: 16px; color: var(--text-muted); margin-bottom: 8px; display: block; }
-    .word-df { font-size: 14px; color: #cbd5e1; line-height: 1.5; display: block;}
-
-    .toast {
-      position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
-      background: var(--accent); color: white; padding: 12px 24px; border-radius: 30px;
-      font-weight: bold; box-shadow: var(--shadow); transition: transform 0.3s; z-index: 2000;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.error { background: var(--incorrect); }
-    .toast.success { background: var(--correct); }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-  <!-- ÉCRAN D'ACCUEIL -->
-  <div id="setupScreen" class="screen active">
-    <h1>Memory HSK</h1>
-    
-    <div class="status-chips">
-      <div id="statusDict" class="chip">Dictionnaire : Chargement...</div>
-      <div id="statusHsk" class="chip">Niveaux HSK : Chargement...</div>
-    </div>
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Changer de thème">
+  <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+</button>
 
-    <div class="panel" id="manualUpload" style="display: none;">
-      <p style="font-size:13px; color:var(--incorrect); margin-bottom:12px; font-weight: 600;">
-        ⚠️ Chargement automatique impossible (fichier local ou non trouvé). Importez manuellement :
-      </p>
-      <div class="form-group">
-        <label>Dictionnaire (cedict_ts.u8 ou .txt)</label>
-        <input type="file" id="fileDict" accept=".u8,.txt">
-      </div>
-      <div class="form-group">
-        <label>Niveaux HSK (niveaux.csv)</label>
-        <input type="file" id="fileHsk" accept=".csv">
-      </div>
-    </div>
+<!-- ÉCRAN D'ACCUEIL -->
+<div id="setupScreen" class="screen active">
 
-    <div class="panel">
+  <div class="brand">
+    <div class="brand-seal">忆</div>
+    <div class="brand-eyebrow">拼图记忆 · 汉字学习</div>
+    <h1>Memory <span class="accent-word">HSK</span></h1>
+  </div>
+
+  <div class="status-chips">
+    <div id="statusDict" class="chip">Dictionnaire : chargement…</div>
+    <div id="statusHsk" class="chip">Niveaux HSK : chargement…</div>
+  </div>
+
+  <div class="panel" id="manualUpload" style="display:none;">
+    <div class="section-label">Import manuel requis</div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label>Dictionnaire (cedict_ts.u8 ou .txt)</label>
+      <input type="file" id="fileDict" accept=".u8,.txt">
+    </div>
+    <div class="form-group">
+      <label>Niveaux HSK (niveaux.csv)</label>
+      <input type="file" id="fileHsk" accept=".csv">
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section-label">Plateau</div>
+    <div class="settings-grid">
       <div class="form-group">
         <label>Taille de la grille</label>
         <select id="selGrid">
-          <option value="4">4 × 4 (8 paires)</option>
-          <option value="6">6 × 6 (18 paires)</option>
-          <option value="8">8 × 8 (32 paires)</option>
+          <option value="3" selected>3 × 3</option>
+          <option value="4">4 × 4</option>
+          <option value="5">5 × 5</option>
+          <option value="6">6 × 6</option>
+          <option value="8">8 × 8</option>
         </select>
       </div>
-
       <div class="form-group">
         <label>Condition de victoire</label>
         <select id="selMode">
-          <option value="classic">Classique (Paires simples)</option>
-          <option value="def">Quiz : Trouver la définition</option>
-          <option value="pinyin">Quiz : Trouver le pinyin</option>
-          <option value="both">Quiz : Définition + Pinyin</option>
+          <option value="classic">Classique (paires simples)</option>
+          <option value="def">Quiz : définition</option>
+          <option value="pinyin">Quiz : pinyin</option>
+          <option value="both">Quiz : définition + pinyin</option>
         </select>
       </div>
-
-      <div class="form-group checkbox-wrap">
+      <div class="form-group full-span checkbox-wrap" id="expertWrap">
         <input type="checkbox" id="chkExpert">
-        <label for="chkExpert" style="margin:0; color:var(--text-main);">Mode Expert (Mélange en cas d'erreur)</label>
+        <label for="chkExpert" style="margin:0; color:var(--ink); font-size:13px;">Mode Expert — mélange après erreur</label>
       </div>
-
       <div class="form-group">
-        <label>Mode Temps</label>
+        <label>Mode temps</label>
         <select id="selTimeMode">
-          <option value="chrono">Chronomètre (Meilleur temps)</option>
-          <option value="timer">Minuteur (Temps limite)</option>
-          <option value="free">Libre (Sans temps)</option>
+          <option value="chrono">Chronomètre</option>
+          <option value="timer">Minuteur</option>
+          <option value="free">Libre (sans temps)</option>
         </select>
       </div>
-
-      <div class="form-group" id="timerGroup" style="display: none;">
+      <div class="form-group" id="timerGroup" style="display:none;">
         <label>Durée du minuteur</label>
         <div class="slider-container">
           <input type="range" id="slTimer" min="30" max="600" step="30" value="120">
           <span class="slider-val" id="valTimer">2m 00s</span>
         </div>
       </div>
-
-      <div class="form-group">
-        <label>Niveaux HSK inclus</label>
-        <div class="hsk-grid">
-          <button class="btn-hsk active" data-lvl="1">HSK 1</button>
-          <button class="btn-hsk active" data-lvl="2">HSK 2</button>
-          <button class="btn-hsk active" data-lvl="3">HSK 3</button>
-          <button class="btn-hsk" data-lvl="4">HSK 4</button>
-          <button class="btn-hsk" data-lvl="5">HSK 5</button>
-          <button class="btn-hsk" data-lvl="6">HSK 6</button>
-          <button class="btn-hsk" data-lvl="7">HSK 7-9</button>
-        </div>
-      </div>
-
-      <button id="btnStart" class="btn" disabled>Démarrer (0 mots dispo)</button>
     </div>
   </div>
 
-  <!-- ÉCRAN DE JEU -->
-  <div id="gameScreen" class="screen">
-    <div class="game-header">
-      <div class="game-stat">
-        <span id="timeLabel">Temps</span>
-        <span id="uiTime">00:00</span>
-      </div>
-      <div class="game-stat">
-        <span>Essais</span>
-        <span id="uiTries">0</span>
-      </div>
-      <div class="game-stat">
-        <span>Paires</span>
-        <span id="uiScore">0 / 0</span>
-      </div>
+  <div class="panel">
+    <div class="section-label">Niveaux HSK inclus</div>
+    <div class="hsk-grid">
+      <button class="btn-hsk active" data-lvl="1">HSK 1</button>
+      <button class="btn-hsk active" data-lvl="2">HSK 2</button>
+      <button class="btn-hsk active" data-lvl="3">HSK 3</button>
+      <button class="btn-hsk" data-lvl="4">HSK 4</button>
+      <button class="btn-hsk" data-lvl="5">HSK 5</button>
+      <button class="btn-hsk" data-lvl="6">HSK 6</button>
+      <button class="btn-hsk" data-lvl="7">HSK 7-9</button>
     </div>
+    <div id="capacityHint" class="capacity-hint"></div>
+  </div>
 
-    <div class="board-wrapper">
-      <div id="board" class="board"></div>
+  <button id="btnStart" class="btn" disabled>Démarrer (0 mots dispo)</button>
+  <div style="height:20px; flex-shrink:0;"></div>
+</div>
+
+<!-- ÉCRAN DE JEU -->
+<div id="gameScreen" class="screen">
+  
+  <div class="game-header">
+    <div class="game-stat">
+      <span class="stat-label" id="timeLabel">Temps:</span>
+      <span id="uiTime" class="stat-value">00:00</span>
     </div>
-
-    <div class="game-footer">
-      <button id="btnFoundWords" class="btn btn-secondary">Mots trouvés</button>
-      <button id="btnQuit" class="btn btn-secondary">Quitter</button>
+    <div class="game-stat">
+      <span class="stat-label">Essais:</span>
+      <span id="uiTries" class="stat-value">0</span>
+    </div>
+    <div class="game-stat">
+      <span class="stat-label">Paires:</span>
+      <span id="uiScore" class="stat-value">0 / 0</span>
     </div>
   </div>
 
-  <!-- MODAL: QUIZ -->
-  <div id="modalQuiz" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="quizTitle">Validation</div>
+  <!-- PANNEAU DE RÉVÉLATION DYNAMIQUE -->
+  <div id="wordPreviewBanner" class="reveal-panel" aria-live="polite">
+    <div class="reveal-inner">
+      <div class="reveal-head">
+        <span id="wpHanzi" class="reveal-hanzi hanzi"></span>
+        <span id="wpPinyin" class="reveal-pinyin"></span>
+        <span id="wpHsk"></span>
       </div>
-      <div id="quizTarget" class="quiz-target hanzi"></div>
-      <div id="quizSubtitle" class="quiz-subtitle"></div>
-      <div id="quizOptions" class="quiz-options"></div>
+      <div id="wpDef" class="reveal-def"></div>
     </div>
   </div>
 
-  <!-- MODAL: LISTE -->
-  <div id="modalList" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="listTitle">Mots trouvés</div>
-        <button class="modal-close" onclick="closeModal('modalList')">✕</button>
-      </div>
-      <div id="listContent" class="words-list"></div>
-    </div>
+  <div class="board-wrapper">
+    <div id="board" class="board"></div>
   </div>
 
-  <div id="toast" class="toast">Message</div>
+  <div class="game-footer">
+    <button id="btnFoundWords" class="btn btn-secondary">Trouvés</button>
+    <button id="btnRestart" class="btn btn-secondary">Rejouer</button>
+    <button id="btnQuit" class="btn btn-secondary">Quitter</button>
+  </div>
+</div>
+
+<!-- MODAL: QUIZ -->
+<div id="modalQuiz" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="quizTitle">Validation</div>
+    </div>
+    <div id="quizTarget" class="quiz-target hanzi"></div>
+    <div id="quizSubtitle" class="quiz-subtitle"></div>
+    <div id="quizOptions" class="quiz-options"></div>
+  </div>
+</div>
+
+<!-- MODAL: LISTE -->
+<div id="modalList" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="listTitle">Mots trouvés</div>
+      <button class="modal-close" onclick="closeModal('modalList')" aria-label="Fermer">✕</button>
+    </div>
+    <div id="listContent" class="words-list"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Message</div>
 
 <script>
 let dict = new Map();
@@ -414,7 +690,7 @@ let wordPool = [];
 const DICT_URL = 'cedict_ts.u8';
 const HSK_URL = 'niveaux.csv';
 
-let gameConfig = { size: 4, mode: 'classic', expert: false, timeMode: 'chrono', timerSec: 120, levels: [1,2,3] };
+let gameConfig = { size: 3, mode: 'classic', expert: false, timeMode: 'chrono', timerSec: 120, levels: [1,2,3] };
 let cards = [];
 let foundWordsData = [];
 let flippedCards = [];
@@ -426,9 +702,28 @@ let secondsElapsed = 0;
 let triesCount = 0;
 let hideTimeout = null;
 
-let quizQueue = []; 
+let quizQueue = [];
 let currentQuizStep = null;
 let quizPair = [];
+
+function initTheme(){
+  let theme = 'dark';
+  try{
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) theme = 'light';
+  } catch(e){}
+  applyTheme(theme);
+}
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.setAttribute('aria-label', t === 'dark' ? 'Activer mode clair' : 'Activer mode sombre');
+  const meta = document.getElementById('metaThemeColor');
+  if (meta) meta.setAttribute('content', t === 'dark' ? '#121014' : '#eef1e2');
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
 
 function getHskTagHtml(level) {
   if (!level || level < 1) return '';
@@ -444,7 +739,7 @@ function applyToneDiacritic(syllable, toneNum) {
   };
   syllable = syllable.replace(/v/g, 'ü');
   const vowels = ['a', 'o', 'e', 'i', 'u', 'ü'];
-  
+
   for (let v of vowels) {
     if (syllable.includes(v)) {
       if(v === 'i' && syllable.includes('u')) v = 'u';
@@ -464,12 +759,25 @@ function numericToDiacriticPinyinStr(pinyinStr) {
   }).join(' ');
 }
 
+function renderColoredPinyinHtml(pinyinStr) {
+  if (!pinyinStr) return '';
+  return pinyinStr.split(' ').map(p => {
+    let toneMatch = p.match(/[1-5]/);
+    let tone = toneMatch ? parseInt(toneMatch[0]) : 5;
+    let clean = applyToneDiacritic(p.replace(/[1-5]/g, '').toLowerCase(), tone);
+    return `<span class="py-syl tone${tone}">${clean}</span>`;
+  }).join(' ');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   setupUIEventListeners();
   loadDataFiles();
 });
 
 function setupUIEventListeners() {
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
   const slTimer = document.getElementById('slTimer');
   const valTimer = document.getElementById('valTimer');
   slTimer.addEventListener('input', e => {
@@ -483,6 +791,8 @@ function setupUIEventListeners() {
     document.getElementById('timerGroup').style.display = e.target.value === 'timer' ? 'flex' : 'none';
   });
 
+  document.getElementById('selGrid').addEventListener('change', updateWordPool);
+
   document.querySelectorAll('.btn-hsk').forEach(btn => {
     btn.addEventListener('click', () => {
       btn.classList.toggle('active');
@@ -491,10 +801,19 @@ function setupUIEventListeners() {
   });
 
   document.getElementById('btnStart').addEventListener('click', startGame);
+  
+  document.getElementById('btnRestart').addEventListener('click', () => {
+    showToast("Plateau réinitialisé !", "success");
+    stopTimer();
+    startGame();
+  });
+
   document.getElementById('btnQuit').addEventListener('click', () => {
     stopTimer();
+    stopStageWidthWatch();
     switchScreen('setupScreen');
   });
+
   document.getElementById('btnFoundWords').addEventListener('click', () => showWordListModal(foundWordsData, "Mots trouvés"));
 
   document.getElementById('fileDict').addEventListener('change', e => readLocalFile(e, parseCedict));
@@ -510,26 +829,26 @@ async function loadDataFiles() {
   let hskOk = false;
 
   try {
-    statusDict.textContent = "Dictionnaire : Chargement...";
+    statusDict.textContent = "Dictionnaire : chargement…";
     const resDict = await fetch(DICT_URL);
     if (!resDict.ok) throw new Error(`HTTP ${resDict.status}`);
     const txtDict = await resDict.text();
     parseCedict(txtDict);
     dictOk = true;
   } catch (err) {
-    statusDict.textContent = "Dictionnaire : Non trouvé";
+    statusDict.textContent = "Dictionnaire : import manuel";
     statusDict.classList.add('error');
   }
 
   try {
-    statusHsk.textContent = "Niveaux HSK : Chargement...";
+    statusHsk.textContent = "Niveaux HSK : chargement…";
     const resHsk = await fetch(HSK_URL);
     if (!resHsk.ok) throw new Error(`HTTP ${resHsk.status}`);
     const txtHsk = await resHsk.text();
     parseHSK(txtHsk);
     hskOk = true;
   } catch (err) {
-    statusHsk.textContent = "Niveaux HSK : Non trouvé";
+    statusHsk.textContent = "Niveaux HSK : import manuel";
     statusHsk.classList.add('error');
   }
 
@@ -554,17 +873,17 @@ function parseCedict(text) {
   for(let line of lines) {
     line = line.trim();
     if(!line || line.startsWith('#')) continue;
-    
+
     let m = line.match(/^(\S+)\s+(\S+)\s+\[([^\]]+)\]\s+\/(.+)\/$/);
     if(m) {
       let simp = m[2];
       let pinyin = m[3];
       let defsStr = m[4];
-      
+
       defsStr = defsStr.replace(/\[([a-zA-Z1-5\s:]+)\]/g, (match, p1) => {
         return '[' + numericToDiacriticPinyinStr(p1) + ']';
       });
-      
+
       let defs = defsStr.split('/').filter(d => d.trim().length > 0);
       if(!dict.has(simp)) {
         dict.set(simp, { pinyin, defs });
@@ -585,14 +904,14 @@ function parseHSK(text) {
     if(!l) continue;
     let parts = l.split(/[,;]/);
     if(parts.length < 2) continue;
-    
+
     let word = parts[0].trim();
     let val = parts[1].trim();
     let lvl = 0;
-    
+
     if(/^\d+$/.test(val)) lvl = parseInt(val);
     else if(val === '7-9' || val === 'sept') lvl = 7;
-    
+
     if(lvl >= 1 && lvl <= 7) hskMap.set(word, lvl);
   }
   const s = document.getElementById('statusHsk');
@@ -617,8 +936,21 @@ function updateWordPool() {
     }
   }
   let btnStart = document.getElementById('btnStart');
-  btnStart.textContent = `Démarrer (${wordPool.length} mots dispo)`;
-  btnStart.disabled = wordPool.length < 32; 
+  const size = parseInt(document.getElementById('selGrid').value) || 3;
+  const needed = Math.floor((size*size)/2);
+  
+  const startLabel = `Démarrer (${wordPool.length} mots dispo)`;
+  btnStart.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> ${startLabel}`;
+  btnStart.disabled = wordPool.length < needed;
+
+  const hint = document.getElementById('capacityHint');
+  if (wordPool.length >= needed) {
+    hint.className = 'capacity-hint ok';
+    hint.textContent = `✓ ${wordPool.length} mots disponibles pour ${needed} paires`;
+  } else {
+    hint.className = 'capacity-hint bad';
+    hint.textContent = `✗ Il faut ${needed} mots au moins pour cette grille (${wordPool.length} dispo)`;
+  }
 }
 
 function startGame() {
@@ -628,8 +960,9 @@ function startGame() {
   gameConfig.timeMode = document.getElementById('selTimeMode').value;
   gameConfig.timerSec = parseInt(document.getElementById('slTimer').value);
 
-  totalPairs = (gameConfig.size * gameConfig.size) / 2;
-  
+  const totalCards = gameConfig.size * gameConfig.size;
+  totalPairs = Math.floor(totalCards / 2);
+
   if(wordPool.length < totalPairs) {
     showToast("Pas assez de mots disponibles !", "error");
     return;
@@ -637,12 +970,16 @@ function startGame() {
 
   let shuffledPool = [...wordPool].sort(() => 0.5 - Math.random());
   let selectedWords = shuffledPool.slice(0, totalPairs);
-  
+
   cards = [];
   selectedWords.forEach((word, index) => {
-    cards.push({ id: `a_${index}`, word: word, state: 'hidden', logicIndex: 0 });
-    cards.push({ id: `b_${index}`, word: word, state: 'hidden', logicIndex: 0 });
+    cards.push({ id: `a_${index}`, word: word, state: 'hidden', logicIndex: 0, isEmpty: false });
+    cards.push({ id: `b_${index}`, word: word, state: 'hidden', logicIndex: 0, isEmpty: false });
   });
+
+  if (totalCards % 2 !== 0) {
+    cards.push({ id: `empty`, word: '∅', state: 'hidden', logicIndex: 0, isEmpty: true });
+  }
 
   cards.sort(() => 0.5 - Math.random());
   cards.forEach((c, i) => c.logicIndex = i);
@@ -657,11 +994,37 @@ function startGame() {
   flippedCards = [];
   lockBoard = false;
 
+  hidePreviewBanner();
   setupGridUI();
   updateScoreUI();
   startTimer();
 
   switchScreen('gameScreen');
+  requestAnimationFrame(watchStageWidth);
+}
+
+let stageResizeObserver = null;
+function syncStageWidth() {
+  const board = document.getElementById('board');
+  if (!board) return;
+  const w = board.getBoundingClientRect().width;
+  if (w > 0) document.documentElement.style.setProperty('--stage-width', w + 'px');
+}
+function watchStageWidth() {
+  const board = document.getElementById('board');
+  if (!board) return;
+  if (window.ResizeObserver) {
+    if (stageResizeObserver) stageResizeObserver.disconnect();
+    stageResizeObserver = new ResizeObserver(syncStageWidth);
+    stageResizeObserver.observe(board);
+  } else {
+    window.addEventListener('resize', syncStageWidth);
+  }
+  syncStageWidth();
+}
+function stopStageWidthWatch() {
+  if (stageResizeObserver) { stageResizeObserver.disconnect(); stageResizeObserver = null; }
+  window.removeEventListener('resize', syncStageWidth);
 }
 
 function setupGridUI() {
@@ -672,10 +1035,20 @@ function setupGridUI() {
   cards.forEach((card, i) => {
     const el = document.createElement('div');
     el.classList.add('card');
+    if(card.isEmpty) el.classList.add('empty-trap');
     el.dataset.logicIndex = i;
+
+    let lenClass = 'len-1';
+    if (card.word.length === 2) lenClass = 'len-2';
+    else if (card.word.length === 3) lenClass = 'len-3';
+    else if (card.word.length === 4) lenClass = 'len-4';
+    else if (card.word.length > 4) lenClass = 'len-long';
+
     el.innerHTML = `
-      <div class="card-face card-front"></div>
-      <div class="card-face card-back hanzi">${card.word}</div>
+      <div class="card-inner">
+        <div class="card-face card-front"></div>
+        <div class="card-face card-back hanzi ${lenClass}">${card.word}</div>
+      </div>
     `;
     el.addEventListener('click', () => handleCardClick(i));
     board.appendChild(el);
@@ -687,14 +1060,34 @@ function handleCardClick(logicIndex) {
 
   if (cardData.state !== 'hidden' || flippedCards.includes(cardData)) return;
 
+  hidePreviewBanner();
+
   if (hideTimeout) {
     hideFlippedCards();
   }
 
   if (lockBoard) return;
-  
+
   let domCard = document.querySelector(`.card[data-logic-index="${logicIndex}"]`);
   domCard.classList.add('flipped');
+
+  if (cardData.isEmpty) {
+    lockBoard = true;
+    triesCount++;
+    updateScoreUI();
+    showToast("Case vide !", "error");
+    setTimeout(() => {
+      domCard.classList.remove('flipped');
+      lockBoard = false;
+      if (flippedCards.length === 1) {
+        let firstCardDom = document.querySelector(`.card[data-logic-index="${flippedCards[0].logicIndex}"]`);
+        if (firstCardDom) firstCardDom.classList.remove('flipped');
+        flippedCards = [];
+      }
+    }, 800);
+    return;
+  }
+
   flippedCards.push(cardData);
 
   if (flippedCards.length === 2) {
@@ -702,14 +1095,19 @@ function handleCardClick(logicIndex) {
     updateScoreUI();
 
     let [c1, c2] = flippedCards;
-    
+
     if (c1.word === c2.word) {
       lockBoard = true;
-      setTimeout(() => {
-        quizPair = [c1, c2];
-        buildQuizQueue(c1.word);
-        processQuizQueue();
-      }, 400);
+      if (gameConfig.mode === 'classic') {
+          quizPair = [c1, c2];
+          markPairAsFound();
+      } else {
+          setTimeout(() => {
+            quizPair = [c1, c2];
+            buildQuizQueue(c1.word);
+            processQuizQueue();
+          }, 400);
+      }
     } else {
       hideTimeout = setTimeout(hideFlippedCards, 1300);
     }
@@ -726,13 +1124,36 @@ function hideFlippedCards() {
     let [c1, c2] = flippedCards;
     let dom1 = document.querySelector(`.card[data-logic-index="${c1.logicIndex}"]`);
     let dom2 = document.querySelector(`.card[data-logic-index="${c2.logicIndex}"]`);
-    
+
     if(dom1) dom1.classList.remove('flipped');
     if(dom2) dom2.classList.remove('flipped');
   }
 
   flippedCards = [];
   lockBoard = false;
+}
+
+function showPreviewBanner(word) {
+  const dictEntry = dict.get(word);
+  if (!dictEntry) return;
+
+  const banner = document.getElementById('wordPreviewBanner');
+  const lvl = hskMap.get(word);
+
+  document.getElementById('wpHanzi').textContent = word;
+  
+  // INVERSION EFFECTUÉE ICI : On place le Pinyin d'abord, puis le tag HSK ensuite
+  document.getElementById('wpPinyin').innerHTML = renderColoredPinyinHtml(dictEntry.pinyin);
+  document.getElementById('wpHsk').innerHTML = getHskTagHtml(lvl);
+
+  document.getElementById('wpDef').textContent = dictEntry.defs.join(' / ');
+
+  banner.classList.add('active');
+}
+
+function hidePreviewBanner() {
+  const banner = document.getElementById('wordPreviewBanner');
+  if (banner) banner.classList.remove('active');
 }
 
 function markPairAsFound() {
@@ -742,21 +1163,23 @@ function markPairAsFound() {
 
   let dom1 = document.querySelector(`.card[data-logic-index="${c1.logicIndex}"]`);
   let dom2 = document.querySelector(`.card[data-logic-index="${c2.logicIndex}"]`);
-  
+
   dom1.classList.add('matched');
   dom2.classList.add('matched');
-
-  dom1.onclick = (e) => { e.stopPropagation(); showWordListModal([dict.get(c1.word)], c1.word); };
-  dom2.onclick = (e) => { e.stopPropagation(); showWordListModal([dict.get(c2.word)], c2.word); };
 
   let dictEntry = dict.get(c1.word);
   dictEntry.hanzi = c1.word;
   dictEntry.level = hskMap.get(c1.word);
   foundWordsData.push(dictEntry);
 
+  dom1.onclick = (e) => { e.stopPropagation(); showWordListModal([dictEntry], ""); };
+  dom2.onclick = (e) => { e.stopPropagation(); showWordListModal([dictEntry], ""); };
+
+  showPreviewBanner(c1.word);
+
   pairsFound++;
   updateScoreUI();
-  
+
   flippedCards = [];
   lockBoard = false;
 
@@ -764,7 +1187,7 @@ function markPairAsFound() {
     stopTimer();
     setTimeout(() => {
       showToast("Félicitations, vous avez gagné !", "success");
-      showWordListModal(foundWordsData, "Victoire ! Mots découverts");
+      showWordListModal(foundWordsData, "🏮 Victoire ! Mots découverts");
     }, 500);
   }
 }
@@ -772,7 +1195,7 @@ function markPairAsFound() {
 function buildQuizQueue(word) {
   quizQueue = [];
   let m = gameConfig.mode;
-  if(m === 'classic') return; 
+  if(m === 'classic') return;
 
   if(m === 'def' || m === 'both') {
     quizQueue.push({ type: 'def', word: word });
@@ -795,7 +1218,7 @@ function processQuizQueue() {
     return;
   }
   currentQuizStep = quizQueue.shift();
-  
+
   if(currentQuizStep.type === 'def') {
     renderDefQuiz(currentQuizStep.word);
   } else if (currentQuizStep.type === 'pinyin') {
@@ -807,17 +1230,17 @@ function renderDefQuiz(word) {
   const target = document.getElementById('quizTarget');
   const subtitle = document.getElementById('quizSubtitle');
   const optionsContainer = document.getElementById('quizOptions');
-  
+
   const currentLvl = hskMap.get(word);
   target.textContent = word;
   subtitle.textContent = "Choisissez la bonne définition :";
   optionsContainer.className = "quiz-options";
 
   let correctDef = dict.get(word).defs.join(' / ');
-  
+
   let otherWords = wordPool.filter(w => w !== word);
   otherWords.sort(() => 0.5 - Math.random());
-  
+
   let wrongOptions = otherWords.slice(0, 4).map(w => ({
     text: dict.get(w).defs.join(' / '),
     level: hskMap.get(w),
@@ -847,14 +1270,14 @@ function renderPinyinQuiz(word, char, rawPinyin, charIdx, totalChars) {
   const target = document.getElementById('quizTarget');
   const subtitle = document.getElementById('quizSubtitle');
   const optionsContainer = document.getElementById('quizOptions');
-  
+
   target.textContent = char;
   subtitle.textContent = `Mot : ${word} (${charIdx+1}/${totalChars}). Quel est le bon ton ?`;
   optionsContainer.className = "quiz-options pinyin-grid";
 
   let baseSyllable = rawPinyin.replace(/[1-5]/g, '').toLowerCase();
   let correctTone = parseInt(rawPinyin.match(/[1-5]/) ? rawPinyin.match(/[1-5]/)[0] : 5);
-  
+
   let options = [];
   for(let i=1; i<=5; i++) {
     options.push({ text: applyToneDiacritic(baseSyllable, i), correct: (i === correctTone) });
@@ -875,7 +1298,7 @@ function renderPinyinQuiz(word, char, rawPinyin, charIdx, totalChars) {
 
 function handleQuizAnswer(btnElement, isCorrect) {
   let allBtns = document.getElementById('quizOptions').querySelectorAll('.quiz-btn');
-  
+
   if (isCorrect) {
     allBtns.forEach(b => b.disabled = true);
     btnElement.classList.add('correct');
@@ -885,11 +1308,11 @@ function handleQuizAnswer(btnElement, isCorrect) {
   } else {
     btnElement.classList.add('wrong');
     btnElement.disabled = true;
-    
+
     if (gameConfig.expert) {
       allBtns.forEach(b => b.disabled = true);
       allBtns.forEach(b => { if(b.dataset.correct === 'true') b.classList.add('correct'); });
-      
+
       setTimeout(() => {
         closeModal('modalQuiz');
         handleQuizFailure();
@@ -900,7 +1323,7 @@ function handleQuizAnswer(btnElement, isCorrect) {
 
 function handleQuizFailure() {
   hideFlippedCards();
-  
+
   if (gameConfig.expert) {
     showToast("Erreur ! Les cartes se cachent et se déplacent...", "error");
     document.getElementById('board').classList.add('shake');
@@ -935,18 +1358,28 @@ function reRenderCardDOM(logicIndex) {
 }
 
 function showWordListModal(wordsArray, title) {
-  document.getElementById('listTitle').textContent = title;
+  const listTitleEl = document.getElementById('listTitle');
+  if (title) {
+    listTitleEl.textContent = title;
+    listTitleEl.style.display = 'block';
+  } else {
+    listTitleEl.style.display = 'none'; 
+  }
+
+  const modalContentEl = document.querySelector('#modalList .modal-content');
+  modalContentEl.classList.toggle('victory', /victoire/i.test(title || ''));
+
   const content = document.getElementById('listContent');
   content.innerHTML = '';
 
   if(wordsArray.length === 0) {
-    content.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Aucun mot trouvé pour le moment.</div>';
+    content.innerHTML = '<div style="text-align:center; color:var(--ink-soft); padding: 24px;">Aucun mot trouvé pour le moment.</div>';
   }
 
   wordsArray.forEach(w => {
     let hanzi = w.hanzi || "Mot";
     let lvl = w.level || hskMap.get(hanzi) || 0;
-    let pinyin = numericToDiacriticPinyinStr(w.pinyin);
+    let pinyinHtml = renderColoredPinyinHtml(w.pinyin);
     let defs = w.defs.join('<br> • ');
 
     let div = document.createElement('div');
@@ -956,7 +1389,7 @@ function showWordListModal(wordsArray, title) {
         <span class="word-hz hanzi">${hanzi}</span>
         ${getHskTagHtml(lvl)}
       </div>
-      <span class="word-py">${pinyin}</span>
+      <span class="word-py">${pinyinHtml}</span>
       <span class="word-df">• ${defs}</span>
     `;
     content.appendChild(div);
@@ -971,7 +1404,7 @@ function closeModal(id) {
 
 function showToast(msg, type) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  t.innerHTML = msg;
   t.className = `toast show ${type}`;
   setTimeout(() => t.classList.remove('show'), 2500);
 }
@@ -990,25 +1423,25 @@ function startTimer() {
   stopTimer();
   let timeLabel = document.getElementById('timeLabel');
   let uiTime = document.getElementById('uiTime');
-  
+
   if (gameConfig.timeMode === 'free') {
-    timeLabel.textContent = "Mode";
-    uiTime.textContent = "Libre";
+    if(timeLabel) timeLabel.textContent = "Mode :";
+    if(uiTime) uiTime.textContent = "Libre";
     return;
   }
 
+  if(timeLabel) timeLabel.textContent = "Temps :";
+
   if (gameConfig.timeMode === 'chrono') {
-    timeLabel.textContent = "Temps écoulé";
     secondsElapsed = 0;
-    uiTime.textContent = "00:00";
+    if(uiTime) uiTime.textContent = "00:00";
     timerInt = setInterval(() => {
       secondsElapsed++;
       let m = Math.floor(secondsElapsed/60).toString().padStart(2,'0');
       let s = (secondsElapsed%60).toString().padStart(2,'0');
-      uiTime.textContent = `${m}:${s}`;
+      if(uiTime) uiTime.textContent = `${m}:${s}`;
     }, 1000);
   } else if (gameConfig.timeMode === 'timer') {
-    timeLabel.textContent = "Temps restant";
     secondsElapsed = gameConfig.timerSec;
     updateTimerDisplay();
     timerInt = setInterval(() => {
@@ -1026,16 +1459,18 @@ function startTimer() {
 
 function updateTimerDisplay() {
   let uiTime = document.getElementById('uiTime');
+  if(!uiTime) return;
   let m = Math.floor(secondsElapsed/60).toString().padStart(2,'0');
   let s = (secondsElapsed%60).toString().padStart(2,'0');
   uiTime.textContent = `${m}:${s}`;
   if(secondsElapsed <= 10) uiTime.style.color = "var(--incorrect)";
-  else uiTime.style.color = "var(--accent)";
+  else uiTime.style.color = "var(--ink)";
 }
 
 function stopTimer() {
   if(timerInt) clearInterval(timerInt);
-  document.getElementById('uiTime').style.color = "var(--accent)";
+  let uiTime = document.getElementById('uiTime');
+  if(uiTime) uiTime.style.color = "var(--ink)";
 }
 </script>
 </body>

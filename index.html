@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   /* ============================================================
@@ -343,6 +344,7 @@
   .grid-4x4{ grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap:8px; }
   .grid-5x5{ grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap:6px; }
   .grid-6x6{ grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap:5px; }
+  .grid-7x7{ grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); gap:4px; }
   .grid-8x8{ grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); gap:3px; }
 
   /* FOOTER */
@@ -405,6 +407,7 @@
   .grid-4x4 .card-back { --base-font: clamp(24px, 7vw, 48px); }
   .grid-5x5 .card-back { --base-font: clamp(18px, 5.5vw, 34px); }
   .grid-6x6 .card-back { --base-font: clamp(15px, 4.5vw, 28px); }
+  .grid-7x7 .card-back { --base-font: clamp(13px, 4vw, 23px); }
   .grid-8x8 .card-back { --base-font: clamp(11px, 3.5vw, 20px); }
 
   .card-back{
@@ -805,6 +808,7 @@
   html.mobile-app .grid-4x4{ gap:var(--mobile-grid-gap-4, 6px); }
   html.mobile-app .grid-5x5{ gap:var(--mobile-grid-gap-5, 5px); }
   html.mobile-app .grid-6x6{ gap:var(--mobile-grid-gap-6, 4px); }
+  html.mobile-app .grid-7x7{ gap:var(--mobile-grid-gap-7, 3px); }
   html.mobile-app .grid-8x8{ gap:var(--mobile-grid-gap-8, 2px); }
   html.mobile-app .card-face{ border-radius:var(--mobile-card-radius, 9px); }
   html.mobile-app .game-footer{
@@ -966,6 +970,109 @@
   html.mobile-app .word-py{ font-size:var(--mobile-word-py, 16px); }
   html.mobile-app .word-df{ font-size:var(--mobile-word-df, 14px); line-height:1.45; }
 
+  /* ============================================================
+     MOBILE APP V4 — échelle visuelle, KaiTi/WenKai, grille 7×7
+     Surcouche exclusivement mobile : aucun sélecteur desktop n'est modifié.
+  ============================================================ */
+  html.mobile-app{
+    --mobile-chinese-font: 'LXGW WenKai', 'KaiTi', 'STKaiti', 'Kaiti SC', 'Noto Serif SC', serif;
+  }
+
+  /* Une carte devient son propre repère de taille : la typo suit donc
+     automatiquement une grille 3×3, 5×5, 7×7, 8×8, etc. */
+  html.mobile-app .card{ container-type:inline-size; }
+  html.mobile-app .card-back,
+  html.mobile-app .card-front::after,
+  html.mobile-app .reveal-hanzi,
+  html.mobile-app .quiz-target,
+  html.mobile-app .word-hz,
+  html.mobile-app #setupScreen .brand-seal,
+  html.mobile-app #setupScreen .brand-eyebrow{
+    font-family:var(--mobile-chinese-font) !important;
+  }
+
+  /* Face révélée : très grande quand le mot est court, réduction progressive
+     pour garantir une seule ligne. Les cqw sont relatifs à LA CARTE, pas à l'écran. */
+  html.mobile-app .card-back{ font-size:58cqw; line-height:1; padding:2px; }
+  html.mobile-app .card-back.len-2{ font-size:40cqw; }
+  html.mobile-app .card-back.len-3{ font-size:29cqw; }
+  html.mobile-app .card-back.len-4{ font-size:22cqw; }
+  html.mobile-app .card-back.len-long{ font-size:17cqw; }
+
+  /* Verso : 忆 grandit/rétrécit avec chaque case. */
+  html.mobile-app .card-front::after{ font-size:61cqw; line-height:1; }
+
+  html.mobile-app .grid-7x7{ gap:var(--mobile-grid-gap-7, 3px); }
+
+  /* Plus de présence et d'air dans la zone de jeu. */
+  html.mobile-app .game-header{
+    min-height:var(--mobile-header-h-v4, 58px);
+    padding:var(--mobile-header-py-v4, 10px) var(--mobile-header-px-v4, 10px);
+    margin-bottom:var(--mobile-section-gap-v4, 10px);
+  }
+  html.mobile-app .game-stat{ gap:var(--mobile-stat-gap-v4, 6px); }
+  html.mobile-app .game-stat .stat-label{
+    font-size:var(--mobile-label-font-v4, 13px);
+    letter-spacing:var(--mobile-label-spacing-v4, .3px);
+  }
+  html.mobile-app .game-stat .stat-value{ font-size:var(--mobile-value-font-v4, 22px); }
+
+  html.mobile-app .reveal-panel{
+    min-height:var(--mobile-reveal-h-v4, 86px);
+    height:var(--mobile-reveal-h-v4, 86px);
+    padding:var(--mobile-reveal-py-v4, 9px) var(--mobile-reveal-px-v4, 12px);
+    margin-bottom:var(--mobile-section-gap-v4, 10px);
+  }
+  html.mobile-app .reveal-hanzi{ font-size:var(--mobile-hanzi-font-v4, 36px); }
+  html.mobile-app .reveal-pinyin{ font-size:var(--mobile-pinyin-font-v4, 19px); }
+  html.mobile-app .reveal-panel .hsk-tag{
+    padding:var(--mobile-tag-py-v4, 4px) var(--mobile-tag-px-v4, 8px);
+    font-size:var(--mobile-hsk-font-v4, 12px);
+  }
+  html.mobile-app .reveal-def{
+    font-size:var(--mobile-def-font-v4, 15px);
+    line-height:1.27;
+  }
+
+  html.mobile-app .game-footer{
+    min-height:var(--mobile-footer-h-v4, 54px);
+    gap:var(--mobile-footer-button-gap-v4, 8px);
+    margin:var(--mobile-section-gap-v4, 10px) auto 0;
+  }
+  html.mobile-app .game-footer .btn{
+    min-height:var(--mobile-footer-h-v4, 54px);
+    font-size:var(--mobile-btn-font-v4, 16px);
+    padding:var(--mobile-btn-py-v4, 11px) 4px;
+  }
+
+  /* Popups : hausse franche de toute la hiérarchie typographique. */
+  html.mobile-app .modal-content{ padding:var(--mobile-modal-pad-v4, 22px); }
+  html.mobile-app .modal-title{ font-size:var(--mobile-modal-title-v4, 23px); }
+  html.mobile-app .modal-close{
+    width:var(--mobile-close-size-v4, 42px);
+    height:var(--mobile-close-size-v4, 42px);
+    font-size:var(--mobile-close-font-v4, 21px);
+  }
+  html.mobile-app .quiz-target{ font-size:var(--mobile-quiz-target-v4, 72px); }
+  html.mobile-app .quiz-subtitle{
+    font-size:var(--mobile-quiz-subtitle-v4, 17px);
+    line-height:1.35;
+  }
+  html.mobile-app .quiz-options{ gap:var(--mobile-quiz-gap-v4, 12px); }
+  html.mobile-app .quiz-btn{
+    min-height:var(--mobile-quiz-btn-h-v4, 58px);
+    padding:var(--mobile-quiz-btn-pad-v4, 15px);
+    font-size:var(--mobile-quiz-btn-font-v4, 18px);
+    line-height:1.4;
+  }
+  html.mobile-app .pinyin-grid .quiz-btn{
+    min-height:var(--mobile-pinyin-quiz-h-v4, 60px);
+    font-size:var(--mobile-pinyin-quiz-font-v4, 23px);
+  }
+  html.mobile-app .word-hz{ font-size:var(--mobile-word-hz-v4, 34px); }
+  html.mobile-app .word-py{ font-size:var(--mobile-word-py-v4, 18px); }
+  html.mobile-app .word-df{ font-size:var(--mobile-word-df-v4, 16px); }
+
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration:.001ms !important; animation-iteration-count:1 !important;
@@ -1017,6 +1124,7 @@
           <option value="4">4 × 4</option>
           <option value="5">5 × 5</option>
           <option value="6">6 × 6</option>
+          <option value="7">7 × 7</option>
           <option value="8">8 × 8</option>
         </select>
       </div>
@@ -1266,6 +1374,7 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-grid-gap-4', u(6));
     root.style.setProperty('--mobile-grid-gap-5', u(5));
     root.style.setProperty('--mobile-grid-gap-6', u(4));
+    root.style.setProperty('--mobile-grid-gap-7', u(3));
     root.style.setProperty('--mobile-grid-gap-8', u(2));
     root.style.setProperty('--mobile-card-radius', u(9));
     root.style.setProperty('--mobile-footer-h', u(50));
@@ -1331,6 +1440,7 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-card-4-font', u(36));
     root.style.setProperty('--mobile-card-5-font', u(27));
     root.style.setProperty('--mobile-card-6-font', u(22));
+    root.style.setProperty('--mobile-card-7-font', u(19));
     root.style.setProperty('--mobile-card-8-font', u(16));
     root.style.setProperty('--mobile-card-backmark-font', u(48));
     root.style.setProperty('--mobile-tag-py', u(3));
@@ -1360,6 +1470,44 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-word-hz', u(29));
     root.style.setProperty('--mobile-word-py', u(16));
     root.style.setProperty('--mobile-word-df', u(14));
+
+    /* V4 : typographie et respiration renforcées */
+    root.style.setProperty('--mobile-header-h-v4', u(58));
+    root.style.setProperty('--mobile-header-py-v4', u(10));
+    root.style.setProperty('--mobile-header-px-v4', u(10));
+    root.style.setProperty('--mobile-section-gap-v4', u(10));
+    root.style.setProperty('--mobile-stat-gap-v4', u(6));
+    root.style.setProperty('--mobile-label-font-v4', u(13));
+    root.style.setProperty('--mobile-label-spacing-v4', u(.3));
+    root.style.setProperty('--mobile-value-font-v4', u(22));
+    root.style.setProperty('--mobile-reveal-h-v4', u(86));
+    root.style.setProperty('--mobile-reveal-py-v4', u(9));
+    root.style.setProperty('--mobile-reveal-px-v4', u(12));
+    root.style.setProperty('--mobile-hanzi-font-v4', u(36));
+    root.style.setProperty('--mobile-pinyin-font-v4', u(19));
+    root.style.setProperty('--mobile-tag-py-v4', u(4));
+    root.style.setProperty('--mobile-tag-px-v4', u(8));
+    root.style.setProperty('--mobile-hsk-font-v4', u(12));
+    root.style.setProperty('--mobile-def-font-v4', u(15));
+    root.style.setProperty('--mobile-footer-h-v4', u(54));
+    root.style.setProperty('--mobile-footer-button-gap-v4', u(8));
+    root.style.setProperty('--mobile-btn-font-v4', u(16));
+    root.style.setProperty('--mobile-btn-py-v4', u(11));
+    root.style.setProperty('--mobile-modal-pad-v4', u(22));
+    root.style.setProperty('--mobile-modal-title-v4', u(23));
+    root.style.setProperty('--mobile-close-size-v4', u(42));
+    root.style.setProperty('--mobile-close-font-v4', u(21));
+    root.style.setProperty('--mobile-quiz-target-v4', u(72));
+    root.style.setProperty('--mobile-quiz-subtitle-v4', u(17));
+    root.style.setProperty('--mobile-quiz-gap-v4', u(12));
+    root.style.setProperty('--mobile-quiz-btn-h-v4', u(58));
+    root.style.setProperty('--mobile-quiz-btn-pad-v4', u(15));
+    root.style.setProperty('--mobile-quiz-btn-font-v4', u(18));
+    root.style.setProperty('--mobile-pinyin-quiz-h-v4', u(60));
+    root.style.setProperty('--mobile-pinyin-quiz-font-v4', u(23));
+    root.style.setProperty('--mobile-word-hz-v4', u(34));
+    root.style.setProperty('--mobile-word-py-v4', u(18));
+    root.style.setProperty('--mobile-word-df-v4', u(16));
   };
 
   applyMetrics();

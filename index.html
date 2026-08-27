@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
   /* ============================================================
@@ -1079,6 +1080,54 @@
       transition-duration:.001ms !important; scroll-behavior:auto !important;
     }
   }
+
+
+  /* ============================================================
+     V5 — disposition commune PC/mobile + ajustements typo mobile
+  ============================================================ */
+
+  /* PC + mobile : compteur juste au-dessus de la grille, définition sous la grille. */
+  #gameScreen .game-header{
+    margin-bottom: 10px;
+  }
+  #gameScreen .board-wrapper{
+    margin: 0;
+  }
+  #gameScreen .reveal-panel{
+    margin-top: 14px;
+    margin-bottom: 0;
+  }
+  #gameScreen .game-footer{
+    margin-top: 22px;
+  }
+
+  /* Mobile uniquement : même police chinoise que le jeu Word Search fourni. */
+  html.mobile-app{
+    --mobile-chinese-font: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  }
+
+  /* Mobile uniquement : mots révélés -15 % par rapport à la V4. */
+  html.mobile-app .card-back{ font-size:49.3cqw; }
+  html.mobile-app .card-back.len-2{ font-size:34cqw; }
+  html.mobile-app .card-back.len-3{ font-size:24.65cqw; }
+  html.mobile-app .card-back.len-4{ font-size:18.7cqw; }
+  html.mobile-app .card-back.len-long{ font-size:14.45cqw; }
+
+  /* Mobile uniquement : 忆 réduit de moitié, toujours proportionnel à chaque case. */
+  html.mobile-app .card-front::after{ font-size:30.5cqw; }
+
+  /* Mobile : respiration adaptée à la nouvelle séquence compteur > grille > définition > boutons. */
+  html.mobile-app #gameScreen .game-header{
+    margin-bottom:var(--mobile-grid-header-gap-v5, 9px);
+  }
+  html.mobile-app #gameScreen .reveal-panel{
+    margin-top:var(--mobile-grid-definition-gap-v5, 11px);
+    margin-bottom:0;
+  }
+  html.mobile-app #gameScreen .game-footer{
+    margin-top:var(--mobile-footer-gap-v5, 18px);
+  }
+
 </style>
 </head>
 <body>
@@ -1195,7 +1244,11 @@
     </div>
   </div>
 
-  <!-- PANNEAU DE RÉVÉLATION (Pinyin à gauche, Tag HSK à droite) -->
+  <div class="board-wrapper">
+    <div id="board" class="board"></div>
+  </div>
+
+  <!-- PANNEAU DE RÉVÉLATION déplacé sous la grille -->
   <div id="wordPreviewBanner" class="reveal-panel" aria-live="polite">
     <div class="reveal-inner">
       <div class="reveal-head">
@@ -1207,10 +1260,6 @@
       </div>
       <div id="wpDef" class="reveal-def"></div>
     </div>
-  </div>
-
-  <div class="board-wrapper">
-    <div id="board" class="board"></div>
   </div>
 
   <div class="game-footer">

@@ -1128,6 +1128,39 @@
     margin-top:var(--mobile-footer-gap-v5, 18px);
   }
 
+
+
+  /* ============================================================
+     V6 — finitions visuelles MOBILE UNIQUEMENT
+  ============================================================ */
+
+  /* Les mots d’un seul caractère ont désormais exactement la même
+     taille que les mots de deux caractères. */
+  html.mobile-app .card-back,
+  html.mobile-app .card-back.len-2{
+    font-size:34cqw;
+    font-weight:500;
+    color:color-mix(in srgb, var(--ink) 84%, var(--ink-soft));
+  }
+
+  /* On conserve les réductions prévues pour les mots plus longs. */
+  html.mobile-app .card-back.len-3{ font-size:24.65cqw; font-weight:500; }
+  html.mobile-app .card-back.len-4{ font-size:18.7cqw; font-weight:500; }
+  html.mobile-app .card-back.len-long{ font-size:14.45cqw; font-weight:500; }
+
+  /* Respiration entre les quatre blocs du jeu. Les valeurs sont injectées
+     en JS avec compensation du viewport desktop éventuel sur téléphone. */
+  html.mobile-app #gameScreen .game-header{
+    margin-bottom:var(--mobile-gap-header-grid-v6, 14px);
+  }
+  html.mobile-app #gameScreen .reveal-panel{
+    margin-top:var(--mobile-gap-grid-definition-v6, 15px);
+    margin-bottom:0;
+  }
+  html.mobile-app #gameScreen .game-footer{
+    margin-top:var(--mobile-gap-definition-footer-v6, 17px);
+  }
+
 </style>
 </head>
 <body>
@@ -1519,6 +1552,9 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-word-hz', u(29));
     root.style.setProperty('--mobile-word-py', u(16));
     root.style.setProperty('--mobile-word-df', u(14));
+    root.style.setProperty('--mobile-gap-header-grid-v6', u(14));
+    root.style.setProperty('--mobile-gap-grid-definition-v6', u(15));
+    root.style.setProperty('--mobile-gap-definition-footer-v6', u(17));
 
     /* V4 : typographie et respiration renforcées */
     root.style.setProperty('--mobile-header-h-v4', u(58));

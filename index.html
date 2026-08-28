@@ -1335,6 +1335,40 @@
   html.mobile-app .card-back.len-long{
     font-size:calc(var(--mobile-card-word-size, 34cqw) * .42);
   }
+
+
+  /* ============================================================
+     MOBILE V11 — badge HSK sous le mot dans la liste/popup définition
+     Uniquement mobile : libère toute la largeur du hanzi.
+  ============================================================ */
+  .mobile-only-hsk-row{ display:none; }
+
+  html.mobile-app #modalList .word-header > .hsk-tag{
+    display:none !important;
+  }
+  html.mobile-app #modalList .mobile-only-hsk-row{
+    display:flex;
+    align-items:center;
+    margin:var(--mobile-modal-v11-tag-mt, 4px) 0 var(--mobile-modal-v11-tag-mb, 5px);
+  }
+  html.mobile-app #modalList .mobile-only-hsk-row .hsk-tag{
+    font-size:var(--mobile-modal-v11-hsk-font, 11px) !important;
+    padding:var(--mobile-modal-v11-hsk-py, 3px) var(--mobile-modal-v11-hsk-px, 7px) !important;
+    border-radius:var(--mobile-modal-v11-hsk-radius, 6px);
+    line-height:1.15;
+  }
+  html.mobile-app #modalList .word-header{
+    flex-wrap:nowrap;
+  }
+  html.mobile-app #modalList .word-hz{
+    min-width:0;
+    white-space:nowrap;
+    flex:1 1 auto;
+  }
+  html.mobile-app #modalList .copy-word-btn{
+    flex:0 0 auto;
+  }
+
 </style>
 </head>
 <body>
@@ -1766,6 +1800,12 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-pinyin-quiz-font-v4', u(23));
     root.style.setProperty('--mobile-word-hz-v4', u(34));
     root.style.setProperty('--mobile-word-py-v4', u(18));
+    root.style.setProperty('--mobile-modal-v11-hsk-font', u(11));
+    root.style.setProperty('--mobile-modal-v11-hsk-py', u(3));
+    root.style.setProperty('--mobile-modal-v11-hsk-px', u(7));
+    root.style.setProperty('--mobile-modal-v11-hsk-radius', u(6));
+    root.style.setProperty('--mobile-modal-v11-tag-mt', u(4));
+    root.style.setProperty('--mobile-modal-v11-tag-mb', u(5));
     root.style.setProperty('--mobile-word-df-v4', u(16));
 
     /* V10 : popup définition — tailles réelles compensées pour le viewport mobile
@@ -2459,6 +2499,7 @@ function showWordListModal(wordsArray, title) {
           <span>Copier</span>
         </button>
       </div>
+      <div class="mobile-only-hsk-row">${getHskTagHtml(lvl)}</div>
       <span class="word-py">${pinyinHtml}</span>
       <span class="word-df">• ${defs}</span>
     `;

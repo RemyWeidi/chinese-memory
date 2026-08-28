@@ -2269,8 +2269,10 @@ function markPairAsFound() {
     stopTimer();
     setTimeout(() => {
       showToast("Félicitations, vous avez gagné !", "success");
-      showWordListModal(foundWordsData, "🏮 Victoire ! Mots découverts");
     }, 500);
+    setTimeout(() => {
+      showWordListModal(foundWordsData, "🏮 Victoire ! Mots découverts");
+    }, 2500);
   }
 }
 

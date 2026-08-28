@@ -1185,6 +1185,115 @@
     margin-top:var(--mobile-gap-definition-footer-v6, 17px);
   }
 
+
+
+  /* ============================================================
+     V8 — POPUPS PLUS LISIBLES (PC + MOBILE)
+     Agrandissement proportionnel de la fiche définition et des modales.
+  ============================================================ */
+
+  /* Desktop / base : hausse mesurée de toute la hiérarchie du popup. */
+  #modalList .modal-content{
+    max-width:560px;
+    padding:28px;
+    border-radius:28px;
+  }
+  #modalList .modal-header{ margin-bottom:18px; }
+  #modalList .modal-title{ font-size:21px; min-height:28px; }
+  #modalList .modal-close{ width:38px; height:38px; font-size:18px; }
+  #modalList .words-list{ gap:14px; }
+  #modalList .word-item{ padding:20px; border-radius:16px; }
+  #modalList .word-header{ gap:12px; margin-bottom:7px; }
+  #modalList .word-hz{ font-size:34px; line-height:1.1; }
+  #modalList .word-item .hsk-tag{
+    font-size:13px;
+    padding:5px 10px;
+    border-radius:7px;
+  }
+  #modalList .word-py{ font-size:18px; margin-bottom:7px; line-height:1.35; }
+  #modalList .word-df{ font-size:16px; line-height:1.55; }
+  #modalList .copy-word-btn{
+    min-height:38px;
+    padding:9px 12px;
+    gap:7px;
+    font-size:13px;
+    border-radius:9px;
+  }
+  #modalList .copy-word-btn svg{ width:17px; height:17px; }
+
+  /* Quiz : même montée en gamme typographique. */
+  #modalQuiz .modal-content{ max-width:560px; padding:27px; }
+  #modalQuiz .modal-title{ font-size:21px; }
+  #modalQuiz .modal-close{ width:38px; height:38px; font-size:18px; }
+  #modalQuiz .quiz-target{ font-size:58px; }
+  #modalQuiz .quiz-subtitle{ font-size:15px; margin-bottom:18px; }
+  #modalQuiz .quiz-options{ gap:11px; }
+  #modalQuiz .quiz-btn{ min-height:54px; padding:15px; font-size:16px; border-radius:15px; }
+  #modalQuiz .pinyin-grid .quiz-btn{ font-size:21px; }
+
+  /* Mobile réel : taille tactile et lisibilité renforcées. */
+  html.mobile-app #modalList .modal-content{
+    width:calc(100% - 20px);
+    max-width:none;
+    padding:var(--mobile-modal-v8-pad, 24px);
+    border-radius:var(--mobile-modal-v8-radius, 24px);
+  }
+  html.mobile-app #modalList .modal-header{ margin-bottom:var(--mobile-modal-v8-head-gap, 18px); }
+  html.mobile-app #modalList .modal-title{ font-size:var(--mobile-modal-v8-title, 22px); }
+  html.mobile-app #modalList .modal-close{
+    width:var(--mobile-modal-v8-close, 46px);
+    height:var(--mobile-modal-v8-close, 46px);
+    font-size:var(--mobile-modal-v8-close-font, 22px);
+  }
+  html.mobile-app #modalList .words-list{ gap:var(--mobile-modal-v8-list-gap, 14px); }
+  html.mobile-app #modalList .word-item{
+    padding:var(--mobile-modal-v8-item-pad, 20px);
+    border-radius:var(--mobile-modal-v8-item-radius, 16px);
+  }
+  html.mobile-app #modalList .word-header{ gap:var(--mobile-modal-v8-header-gap, 12px); margin-bottom:var(--mobile-modal-v8-header-mb, 8px); }
+  html.mobile-app #modalList .word-hz{ font-size:var(--mobile-modal-v8-hz, 38px); line-height:1.08; }
+  html.mobile-app #modalList .word-item .hsk-tag{
+    font-size:var(--mobile-modal-v8-hsk, 17px) !important;
+    padding:var(--mobile-modal-v8-hsk-py, 6px) var(--mobile-modal-v8-hsk-px, 12px) !important;
+    border-radius:var(--mobile-modal-v8-hsk-radius, 8px);
+    line-height:1.15;
+  }
+  html.mobile-app #modalList .copy-word-btn{
+    min-height:var(--mobile-modal-v8-copy-h, 44px);
+    padding:var(--mobile-modal-v8-copy-py, 10px) var(--mobile-modal-v8-copy-px, 14px);
+    gap:var(--mobile-modal-v8-copy-gap, 8px);
+    font-size:var(--mobile-modal-v8-copy-font, 15px);
+    border-radius:var(--mobile-modal-v8-copy-radius, 10px);
+  }
+  html.mobile-app #modalList .copy-word-btn svg{
+    width:var(--mobile-modal-v8-copy-icon, 19px);
+    height:var(--mobile-modal-v8-copy-icon, 19px);
+  }
+  html.mobile-app #modalList .word-py{ font-size:var(--mobile-modal-v8-py, 21px); margin-bottom:var(--mobile-modal-v8-py-mb, 7px); }
+  html.mobile-app #modalList .word-df{ font-size:var(--mobile-modal-v8-def, 18px); line-height:1.55; }
+
+  html.mobile-app #modalQuiz .modal-content{
+    width:calc(100% - 20px);
+    padding:var(--mobile-modal-v8-pad, 24px);
+    border-radius:var(--mobile-modal-v8-radius, 24px);
+  }
+  html.mobile-app #modalQuiz .modal-title{ font-size:var(--mobile-modal-v8-title, 22px); }
+  html.mobile-app #modalQuiz .modal-close{
+    width:var(--mobile-modal-v8-close, 46px);
+    height:var(--mobile-modal-v8-close, 46px);
+    font-size:var(--mobile-modal-v8-close-font, 22px);
+  }
+  html.mobile-app #modalQuiz .quiz-target{ font-size:var(--mobile-modal-v8-quiz-target, 66px); }
+  html.mobile-app #modalQuiz .quiz-subtitle{ font-size:var(--mobile-modal-v8-quiz-subtitle, 17px); margin-bottom:var(--mobile-modal-v8-quiz-subtitle-mb, 18px); }
+  html.mobile-app #modalQuiz .quiz-options{ gap:var(--mobile-modal-v8-quiz-gap, 12px); }
+  html.mobile-app #modalQuiz .quiz-btn{
+    min-height:var(--mobile-modal-v8-quiz-h, 58px);
+    padding:var(--mobile-modal-v8-quiz-pad, 16px);
+    font-size:var(--mobile-modal-v8-quiz-font, 17px);
+    border-radius:var(--mobile-modal-v8-quiz-radius, 15px);
+  }
+  html.mobile-app #modalQuiz .pinyin-grid .quiz-btn{ font-size:var(--mobile-modal-v8-pinyin-font, 22px); }
+
 </style>
 </head>
 <body>

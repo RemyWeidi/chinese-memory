@@ -500,6 +500,17 @@
   .word-py{ font-size:14.5px; margin-bottom:5px; display:block; }
   .word-df{ font-size:13px; color: var(--ink-soft); line-height:1.5; display:block; }
 
+  .copy-word-btn{
+    margin-left:auto; flex-shrink:0;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    padding:6px 9px; border-radius:8px;
+    border:1px solid var(--border); background:var(--panel-2); color:var(--ink-soft);
+    font-family:var(--font-ui); font-size:11.5px; font-weight:700; line-height:1; cursor:pointer;
+    box-shadow:none; transition:border-color .18s ease, color .18s ease, background .18s ease;
+  }
+  .copy-word-btn:hover{ border-color:var(--accent); color:var(--accent); background:var(--card-bg); }
+  .copy-word-btn svg{ width:14px; height:14px; }
+
   .toast{
     position:fixed; top: max(18px, env(safe-area-inset-top)); left:50%; transform: translateX(-50%) translateY(-120px);
     background: var(--accent); color: var(--on-accent); padding:11px 22px; border-radius:30px;
@@ -970,6 +981,19 @@
   html.mobile-app .word-hz{ font-size:var(--mobile-word-hz, 29px); }
   html.mobile-app .word-py{ font-size:var(--mobile-word-py, 16px); }
   html.mobile-app .word-df{ font-size:var(--mobile-word-df, 14px); line-height:1.45; }
+  html.mobile-app .word-item .hsk-tag{
+    font-size:var(--mobile-word-hsk-font, 15px);
+    padding:var(--mobile-word-hsk-py, 5px) var(--mobile-word-hsk-px, 10px);
+    border-radius:var(--mobile-word-hsk-radius, 7px);
+    letter-spacing:.3px;
+  }
+  html.mobile-app .copy-word-btn{
+    min-height:var(--mobile-copy-h, 36px);
+    padding:var(--mobile-copy-py, 8px) var(--mobile-copy-px, 11px);
+    font-size:var(--mobile-copy-font, 13px);
+    border-radius:var(--mobile-copy-radius, 9px);
+  }
+  html.mobile-app .copy-word-btn svg{ width:var(--mobile-copy-icon, 16px); height:var(--mobile-copy-icon, 16px); }
 
   /* ============================================================
      MOBILE APP V4 — échelle visuelle, KaiTi/WenKai, grille 7×7
@@ -2088,7 +2112,7 @@ function renderDefQuiz(word) {
     let btn = document.createElement('button');
     btn.className = 'quiz-btn';
     btn.dataset.correct = opt.correct;
-    btn.innerHTML = `${getHskTagHtml(opt.level)} <span>${opt.text}</span>`;
+    btn.innerHTML = `<span>${opt.text}</span>`;
     btn.onclick = () => handleQuizAnswer(btn, opt.correct);
     optionsContainer.appendChild(btn);
   });
@@ -2187,6 +2211,27 @@ function reRenderCardDOM(logicIndex) {
   backFace.textContent = cards[logicIndex].word;
 }
 
+async function copyWordToClipboard(word) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(word);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = word;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    showToast(`« ${word} » copié`, 'success');
+  } catch (err) {
+    showToast('Impossible de copier le mot', 'error');
+  }
+}
+
 function showWordListModal(wordsArray, title) {
   const listTitleEl = document.getElementById('listTitle');
   if (title) {
@@ -2218,10 +2263,21 @@ function showWordListModal(wordsArray, title) {
       <div class="word-header">
         <span class="word-hz hanzi">${hanzi}</span>
         ${getHskTagHtml(lvl)}
+        <button class="copy-word-btn" type="button" aria-label="Copier le mot ${hanzi}" title="Copier le mot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copier</span>
+        </button>
       </div>
       <span class="word-py">${pinyinHtml}</span>
       <span class="word-df">• ${defs}</span>
     `;
+    div.querySelector('.copy-word-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyWordToClipboard(hanzi);
+    });
     content.appendChild(div);
   });
 

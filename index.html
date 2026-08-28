@@ -1294,6 +1294,47 @@
   }
   html.mobile-app #modalQuiz .pinyin-grid .quiz-btn{ font-size:var(--mobile-modal-v8-pinyin-font, 22px); }
 
+
+
+  /* ============================================================
+     V9 — typographie progressive selon la densité de la grille
+     Les petites cartes utilisent volontairement une proportion plus
+     importante de leur surface pour préserver la lisibilité.
+  ============================================================ */
+
+  /* Desktop / rendu standard : hausse progressive des grilles denses. */
+  .grid-3x3 .card-back{ --base-font: clamp(46px, 9vw, 72px); }
+  .grid-4x4 .card-back{ --base-font: clamp(38px, 7vw, 60px); }
+  .grid-5x5 .card-back{ --base-font: clamp(33px, 5.8vw, 52px); }
+  .grid-6x6 .card-back{ --base-font: clamp(30px, 5vw, 48px); }
+  .grid-7x7 .card-back{ --base-font: clamp(28px, 4.5vw, 44px); }
+  .grid-8x8 .card-back{ --base-font: clamp(26px, 4.1vw, 41px); }
+
+  /* Mobile : la valeur est un pourcentage de LA CARTE (cqw).
+     Plus la grille est dense, plus le caractère remplit sa case. */
+  html.mobile-app .grid-3x3{ --mobile-card-word-size:34cqw; }
+  html.mobile-app .grid-4x4{ --mobile-card-word-size:36cqw; }
+  html.mobile-app .grid-5x5{ --mobile-card-word-size:39cqw; }
+  html.mobile-app .grid-6x6{ --mobile-card-word-size:42cqw; }
+  html.mobile-app .grid-7x7{ --mobile-card-word-size:45cqw; }
+  html.mobile-app .grid-8x8{ --mobile-card-word-size:47cqw; }
+
+  /* 1 et 2 caractères : même taille. */
+  html.mobile-app .card-back,
+  html.mobile-app .card-back.len-2{
+    font-size:var(--mobile-card-word-size, 34cqw);
+  }
+
+  /* Réduction relative pour conserver 3/4/+ caractères sur une ligne. */
+  html.mobile-app .card-back.len-3{
+    font-size:calc(var(--mobile-card-word-size, 34cqw) * .72);
+  }
+  html.mobile-app .card-back.len-4{
+    font-size:calc(var(--mobile-card-word-size, 34cqw) * .54);
+  }
+  html.mobile-app .card-back.len-long{
+    font-size:calc(var(--mobile-card-word-size, 34cqw) * .42);
+  }
 </style>
 </head>
 <body>
@@ -1726,6 +1767,44 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-word-hz-v4', u(34));
     root.style.setProperty('--mobile-word-py-v4', u(18));
     root.style.setProperty('--mobile-word-df-v4', u(16));
+
+    /* V10 : popup définition — tailles réelles compensées pour le viewport mobile
+       et typographie volontairement plus grande. */
+    root.style.setProperty('--mobile-modal-v8-pad', u(26));
+    root.style.setProperty('--mobile-modal-v8-radius', u(24));
+    root.style.setProperty('--mobile-modal-v8-head-gap', u(19));
+    root.style.setProperty('--mobile-modal-v8-title', u(23));
+    root.style.setProperty('--mobile-modal-v8-close', u(46));
+    root.style.setProperty('--mobile-modal-v8-close-font', u(22));
+    root.style.setProperty('--mobile-modal-v8-list-gap', u(15));
+    root.style.setProperty('--mobile-modal-v8-item-pad', u(22));
+    root.style.setProperty('--mobile-modal-v8-item-radius', u(17));
+    root.style.setProperty('--mobile-modal-v8-header-gap', u(13));
+    root.style.setProperty('--mobile-modal-v8-header-mb', u(10));
+    root.style.setProperty('--mobile-modal-v8-hz', u(40));
+    root.style.setProperty('--mobile-modal-v8-hsk', u(17));
+    root.style.setProperty('--mobile-modal-v8-hsk-py', u(6));
+    root.style.setProperty('--mobile-modal-v8-hsk-px', u(12));
+    root.style.setProperty('--mobile-modal-v8-hsk-radius', u(8));
+    root.style.setProperty('--mobile-modal-v8-copy-h', u(44));
+    root.style.setProperty('--mobile-modal-v8-copy-py', u(10));
+    root.style.setProperty('--mobile-modal-v8-copy-px', u(14));
+    root.style.setProperty('--mobile-modal-v8-copy-gap', u(8));
+    root.style.setProperty('--mobile-modal-v8-copy-font', u(15));
+    root.style.setProperty('--mobile-modal-v8-copy-radius', u(10));
+    root.style.setProperty('--mobile-modal-v8-copy-icon', u(19));
+    root.style.setProperty('--mobile-modal-v8-py', u(23));
+    root.style.setProperty('--mobile-modal-v8-py-mb', u(9));
+    root.style.setProperty('--mobile-modal-v8-def', u(21));
+
+    root.style.setProperty('--mobile-modal-v8-quiz-target', u(68));
+    root.style.setProperty('--mobile-modal-v8-quiz-subtitle', u(18));
+    root.style.setProperty('--mobile-modal-v8-quiz-subtitle-mb', u(19));
+    root.style.setProperty('--mobile-modal-v8-quiz-gap', u(12));
+    root.style.setProperty('--mobile-modal-v8-quiz-h', u(60));
+    root.style.setProperty('--mobile-modal-v8-quiz-pad', u(16));
+    root.style.setProperty('--mobile-modal-v8-quiz-font', u(18));
+    root.style.setProperty('--mobile-modal-v8-pinyin-font', u(23));
   };
 
   applyMetrics();

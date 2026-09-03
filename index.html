@@ -1380,9 +1380,9 @@
 
   /* Réponses du quiz : retour juste/faux plus franc sans sortir de la palette. */
   @keyframes quizAnswerPop{
-    0%{ transform:scale(1); }
-    45%{ transform:scale(1.025); }
-    100%{ transform:scale(1.012); }
+    0%{ filter:brightness(1); }
+    45%{ filter:brightness(1.06); }
+    100%{ filter:brightness(1); }
   }
   .quiz-btn.correct,
   .quiz-btn.wrong{
@@ -1390,6 +1390,7 @@
     opacity:1 !important;
     border-width:2.5px !important;
     font-weight:700;
+    transform:none !important;
     animation:quizAnswerPop .24s ease-out both;
   }
   .quiz-btn.correct{
@@ -1430,13 +1431,22 @@
   /* Toasts de jeu réellement lisibles sur téléphone, y compris lorsqu'un
      navigateur mobile expose un viewport de type desktop. */
   html.mobile-app .toast{
-    max-width:calc(100vw - var(--mobile-toast-edge, 24px));
-    padding:var(--mobile-toast-py, 13px) var(--mobile-toast-px, 24px);
-    font-size:var(--mobile-toast-font, 18px);
-    line-height:1.25;
-    border-radius:var(--mobile-toast-radius, 28px);
+    width:min(calc(100vw - var(--mobile-toast-edge, 20px)), var(--mobile-toast-max-w, 420px));
+    max-width:none;
+    padding:var(--mobile-toast-py, 12px) var(--mobile-toast-px, 20px);
+    font-size:var(--mobile-toast-font, 17px);
+    line-height:1.22;
+    border-radius:var(--mobile-toast-radius, 26px);
     white-space:normal;
     text-align:center;
+    text-wrap:balance;
+    opacity:0;
+    transform:translateX(-50%) translateY(calc(-100% - var(--mobile-toast-hide-gap, 20px)));
+    pointer-events:none;
+  }
+  html.mobile-app .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
   }
 
 </style>
@@ -1882,7 +1892,9 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-toast-py', u(13));
     root.style.setProperty('--mobile-toast-px', u(24));
     root.style.setProperty('--mobile-toast-radius', u(28));
-    root.style.setProperty('--mobile-toast-edge', u(24));
+    root.style.setProperty('--mobile-toast-edge', u(20));
+    root.style.setProperty('--mobile-toast-max-w', u(420));
+    root.style.setProperty('--mobile-toast-hide-gap', u(20));
 
     /* V10 : popup définition — tailles réelles compensées pour le viewport mobile
        et typographie volontairement plus grande. */

@@ -1369,6 +1369,76 @@
     flex:0 0 auto;
   }
 
+
+
+  /* ============================================================
+     V13 — corrections de jeu + lisibilité
+  ============================================================ */
+
+  /* Le hanzi dans le bandeau de définition reste marqué mais moins lourd. */
+  .reveal-hanzi{ font-weight:700; }
+
+  /* Réponses du quiz : retour juste/faux plus franc sans sortir de la palette. */
+  @keyframes quizAnswerPop{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.025); }
+    100%{ transform:scale(1.012); }
+  }
+  .quiz-btn.correct,
+  .quiz-btn.wrong{
+    position:relative;
+    opacity:1 !important;
+    border-width:2.5px !important;
+    font-weight:700;
+    animation:quizAnswerPop .24s ease-out both;
+  }
+  .quiz-btn.correct{
+    background:color-mix(in srgb, var(--correct) 38%, var(--card-bg)) !important;
+    border-color:color-mix(in srgb, var(--correct) 88%, var(--ink)) !important;
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--correct) 18%, transparent),
+               0 7px 18px color-mix(in srgb, var(--correct) 22%, transparent),
+               inset 0 0 0 1px color-mix(in srgb, #fff 35%, transparent);
+  }
+  .quiz-btn.wrong{
+    background:color-mix(in srgb, var(--incorrect) 34%, var(--card-bg)) !important;
+    border-color:color-mix(in srgb, var(--incorrect) 90%, var(--ink)) !important;
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--incorrect) 16%, transparent),
+               0 7px 18px color-mix(in srgb, var(--incorrect) 20%, transparent),
+               inset 0 0 0 1px color-mix(in srgb, #fff 30%, transparent);
+  }
+  .quiz-btn.correct::after,
+  .quiz-btn.wrong::after{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    color:#fff;
+    font-size:17px;
+    font-weight:900;
+    line-height:1;
+    box-shadow:0 2px 6px rgba(0,0,0,.16);
+  }
+  .quiz-btn.correct::after{ content:"✓"; background:var(--correct); }
+  .quiz-btn.wrong::after{ content:"✕"; background:var(--incorrect); }
+
+  /* Toasts de jeu réellement lisibles sur téléphone, y compris lorsqu'un
+     navigateur mobile expose un viewport de type desktop. */
+  html.mobile-app .toast{
+    max-width:calc(100vw - var(--mobile-toast-edge, 24px));
+    padding:var(--mobile-toast-py, 13px) var(--mobile-toast-px, 24px);
+    font-size:var(--mobile-toast-font, 18px);
+    line-height:1.25;
+    border-radius:var(--mobile-toast-radius, 28px);
+    white-space:normal;
+    text-align:center;
+  }
+
 </style>
 </head>
 <body>
@@ -1515,7 +1585,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <div class="modal-title" id="quizTitle">Validation</div>
-      <button class="modal-close" onclick="closeModal('modalQuiz')" aria-label="Fermer">✕</button>
+      <button class="modal-close" onclick="cancelQuizModal()" aria-label="Fermer">✕</button>
     </div>
     <div id="quizTarget" class="quiz-target hanzi"></div>
     <div id="quizSubtitle" class="quiz-subtitle"></div>
@@ -1559,6 +1629,7 @@ let hideTimeout = null;
 let quizQueue = [];
 let currentQuizStep = null;
 let quizPair = [];
+let quizResponseTimeout = null;
 
 function initTheme(){
   applyTheme('light'); // Thème clair par défaut
@@ -1807,6 +1878,11 @@ function initRealMobileLayout(){
     root.style.setProperty('--mobile-modal-v11-tag-mt', u(4));
     root.style.setProperty('--mobile-modal-v11-tag-mb', u(5));
     root.style.setProperty('--mobile-word-df-v4', u(16));
+    root.style.setProperty('--mobile-toast-font', u(18));
+    root.style.setProperty('--mobile-toast-py', u(13));
+    root.style.setProperty('--mobile-toast-px', u(24));
+    root.style.setProperty('--mobile-toast-radius', u(28));
+    root.style.setProperty('--mobile-toast-edge', u(24));
 
     /* V10 : popup définition — tailles réelles compensées pour le viewport mobile
        et typographie volontairement plus grande. */
@@ -2383,10 +2459,16 @@ function renderPinyinQuiz(word, char, rawPinyin, charIdx, totalChars) {
 function handleQuizAnswer(btnElement, isCorrect) {
   let allBtns = document.getElementById('quizOptions').querySelectorAll('.quiz-btn');
 
+  if (quizResponseTimeout) {
+    clearTimeout(quizResponseTimeout);
+    quizResponseTimeout = null;
+  }
+
   if (isCorrect) {
     allBtns.forEach(b => b.disabled = true);
     btnElement.classList.add('correct');
-    setTimeout(() => {
+    quizResponseTimeout = setTimeout(() => {
+      quizResponseTimeout = null;
       processQuizQueue();
     }, 1500);
   } else {
@@ -2397,7 +2479,8 @@ function handleQuizAnswer(btnElement, isCorrect) {
       allBtns.forEach(b => b.disabled = true);
       allBtns.forEach(b => { if(b.dataset.correct === 'true') b.classList.add('correct'); });
 
-      setTimeout(() => {
+      quizResponseTimeout = setTimeout(() => {
+        quizResponseTimeout = null;
         closeModal('modalQuiz');
         handleQuizFailure();
       }, 2000);
@@ -2436,9 +2519,26 @@ function handleQuizFailure() {
 }
 
 function reRenderCardDOM(logicIndex) {
-  let domCard = document.querySelector(`.card[data-logic-index="${logicIndex}"]`);
-  let backFace = domCard.querySelector('.card-back');
-  backFace.textContent = cards[logicIndex].word;
+  const cardData = cards[logicIndex];
+  const domCard = document.querySelector(`.card[data-logic-index="${logicIndex}"]`);
+  if (!domCard || !cardData) return;
+
+  /* En mode expert, les objets carte changent de position. Il faut donc
+     déplacer aussi les classes visuelles liées à la carte (notamment la
+     case vide), sinon le rouge peut rester sur la mauvaise case. */
+  domCard.classList.toggle('empty-trap', !!cardData.isEmpty);
+
+  const backFace = domCard.querySelector('.card-back');
+  if (!backFace) return;
+
+  backFace.textContent = cardData.word;
+  backFace.classList.remove('len-1', 'len-2', 'len-3', 'len-4', 'len-long');
+  let lenClass = 'len-1';
+  if (cardData.word.length === 2) lenClass = 'len-2';
+  else if (cardData.word.length === 3) lenClass = 'len-3';
+  else if (cardData.word.length === 4) lenClass = 'len-4';
+  else if (cardData.word.length > 4) lenClass = 'len-long';
+  backFace.classList.add(lenClass);
 }
 
 async function copyWordToClipboard(word) {
@@ -2513,6 +2613,22 @@ function showWordListModal(wordsArray, title) {
   });
 
   document.getElementById('modalList').classList.add('active');
+}
+
+function cancelQuizModal() {
+  /* Fermeture volontaire par la croix : la paire en cours n'est pas validée.
+     On annule aussi tout délai de réponse encore actif afin qu'un ancien quiz
+     ne puisse pas reprendre tout seul après la fermeture. */
+  if (quizResponseTimeout) {
+    clearTimeout(quizResponseTimeout);
+    quizResponseTimeout = null;
+  }
+  quizQueue = [];
+  currentQuizStep = null;
+  closeModal('modalQuiz');
+  hideFlippedCards();
+  quizPair = [];
+  lockBoard = false;
 }
 
 function closeModal(id) {

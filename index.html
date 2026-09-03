@@ -1449,6 +1449,27 @@
     transform:translateX(-50%) translateY(0);
   }
 
+
+  /* V3 — ajustements demandés : toast mobile compact + validation sans pictogrammes */
+  .quiz-btn.correct::after,
+  .quiz-btn.wrong::after{
+    content:none !important;
+    display:none !important;
+  }
+  .quiz-btn.correct,
+  .quiz-btn.wrong{
+    padding-right:var(--mobile-quiz-btn-pad, 13px) !important;
+  }
+
+  html.mobile-app .toast{
+    width:max-content;
+    max-width:min(calc(100vw - 44px), 380px);
+    padding:var(--mobile-toast-py, 12px) var(--mobile-toast-px, 22px);
+    text-align:center;
+    justify-content:center;
+    white-space:normal;
+    text-wrap:balance;
+  }
 </style>
 </head>
 <body>
